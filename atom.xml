@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-23T09:56:44.755Z</updated>
+  <updated>2016-06-23T10:11:46.741Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -15,11 +15,11 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[深入Go语言 - 6gi]]></title>
+    <title><![CDATA[深入Go语言 - 6]]></title>
     <link href="http://colobu.com/2016/06/21/dive-into-go-6/"/>
     <id>http://colobu.com/2016/06/21/dive-into-go-6/</id>
     <published>2016-06-21T09:25:44.000Z</published>
-    <updated>2016-06-23T04:34:33.000Z</updated>
+    <updated>2016-06-23T10:11:32.000Z</updated>
     <content type="html"><![CDATA[<p>本文介绍 类型转换(Conversion)、类型断言(type assertion) 和类型切换（type switch)。</p>
 <p>这三个概念类似但是又完全不同。</p>
 <a id="more"></a>
