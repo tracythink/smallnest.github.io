@@ -367,6 +367,7 @@ for i, x[i] = range x {  // set i, x[2] = 0, x[0]
 <p>defer语句中如果定义了一个函数字面量(匿名函数)，而且函数中对外部的函数返回参数有所修改的话，修改结果会生效，比如下面的结果，虽然函数最后一个语句返回0,但是defer函数又修改了result的结果，所以f的最终结果为1。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// f 返回 1</span></div><div class="line"><span class="keyword">func</span> f() (result <span class="typename">int</span>) {</div><div class="line">	<span class="keyword">defer</span> <span class="keyword">func</span>() {</div><div class="line">		result++</div><div class="line">	}()</div><div class="line">	<span class="keyword">return</span><span class="number"> 0</span></div><div class="line">}</div></pre></td></tr></table></figure>
 
+<p>defer语句虽然挺有用处，但是也需要注意它的函数会被推迟到函数返回的时候才会执行。如果defer函数中有对共享资源的占用的释放，比如锁、文件、连接等，等到函数返回才释放会影响程序的性能，所以对资源能今早释放则今早释放，未必非得放在defer函数中释放。</p>
 <h3 id="go_语句">go 语句</h3>
 <p>go语句将一个函数调用在一个新的goroutine中独立执行。</p>
 <p>goroutine是值得仔细介绍的内容，而且goroutine 调度也非常的有趣，这会在下一章中独立介绍。</p>
