@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-28T06:55:37.573Z</updated>
+  <updated>2016-06-28T07:49:13.598Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://colobu.com/2016/06/27/dive-into-go-8/"/>
     <id>http://colobu.com/2016/06/27/dive-into-go-8/</id>
     <published>2016-06-27T08:21:43.000Z</published>
-    <updated>2016-06-28T06:50:33.000Z</updated>
+    <updated>2016-06-28T07:43:23.000Z</updated>
     <content type="html"><![CDATA[<p>本章介绍 go语句、goroutine调度。</p>
 <a id="more"></a>
 <h3 id="go_语句">go 语句</h3>
@@ -31,7 +31,7 @@
 <p>看下面一段代码,你觉得会输出什么:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">		<span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line">			fmt.Println(i)</div><div class="line">		}()</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>有的人说输出&quot;1 2 3&quot;,有的人说输出&quot;3 3 3&quot;。</p>
+<p>有的人说输出&quot;0 1 2&quot;,有的人说输出&quot;2 2 2&quot;。</p>
 <p>但实际上什么都没有输出。这是因为main goroutine马上就执行完了，它不会等待生成的goroutine的执行。</p>
 <blockquote>
 <p>Program execution begins by initializing the main package and then invoking the function main. When that function invocation returns, the program exits. It does not wait for other (non-main) goroutines to complete.</p>
@@ -48,8 +48,34 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">os.Stdin.Read(<span class="built_in">make</span>([]<span class="typename">byte</span>,<span class="number"> 1</span>))</div></pre></td></tr></table></figure>
 
 <p>那么，加上上面一行，会输出什么?</p>
-<p>答案是 &quot;3 3 3&quot;。</p>
+<p>答案是 &quot;2 2 2&quot;,为什么呢？</p>
+<p>这是因为对于closure的情况(闭包closure的概念在很多语言中都有使用。在Go中，可以简单的认为匿名函数保持对外部变量的引用)，for循环的每次迭代都会使用相同的变量i，<br>这样每个goroutine都持有对相同的变量的引用，因为main gororutine 很快就执行了， 三个goroutine还没来得及执行，等它们执行的时候，i已经等于 2了，所以它们都打印出3来。</p>
+<p>我们可以稍微修改一下，让main goroutine不要执行那么快，每次迭代暂停1秒:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line">		fmt.Println(i)</div><div class="line">	}()</div><div class="line"></div><div class="line">	time.Sleep<span class="number">(1</span> * time.Second)</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这段代码输出的结果为&quot;0 1 2&quot;。因为在main goroutine 暂停的时候， 生成的go routine有机会执行。</p>
+<p>但是我们无法精确控制goroutine的执行，如果期望输出结果总是使用当前的迭代的值，可以改造成下面的样子:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>(v <span class="typename">int</span>) {</div><div class="line">		fmt.Println(v)</div><div class="line">	}(i)</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>输出结果为&quot;2 0 1&quot; (goroutine的执行顺序有可能不同)。</p>
+<p>如果你不想对匿名函数进行改造的话，也可以像下面的这样，生成一个局部变量:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	i := i</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line">		fmt.Println(i)</div><div class="line">	}()</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>输出 &quot;2 1 0&quot;, 注意我们使用一个同名的局部变量shadow了迭代的变量i。</p>
+<p>参考:</p>
+<ul>
+<li><a href="https://golang.org/doc/faq#closures_and_goroutines" target="_blank" rel="external">https://golang.org/doc/faq#closures_and_goroutines</a></li>
+</ul>
 <h3 id="goroutine是什么">goroutine是什么</h3>
+<p>参考</p>
+<ul>
+<li><a href="https://talks.golang.org/2012/concurrency.slide" target="_blank" rel="external">https://talks.golang.org/2012/concurrency.slide</a></li>
+<li><a href="https://talks.golang.org/2012/waza.slide" target="_blank" rel="external">https://talks.golang.org/2012/waza.slide</a></li>
+<li><a href="http://blog.nindalf.com/how-goroutines-work/" target="_blank" rel="external">http://blog.nindalf.com/how-goroutines-work/</a></li>
+<li><a href="http://stackoverflow.com/questions/18058164/is-a-go-goroutine-a-coroutine" target="_blank" rel="external">http://stackoverflow.com/questions/18058164/is-a-go-goroutine-a-coroutine</a></li>
+<li><a href="http://www.golangpatterns.info/concurrency/coroutines" target="_blank" rel="external">http://www.golangpatterns.info/concurrency/coroutines</a></li>
+<li><a href="https://golang.org/doc/faq#goroutines" target="_blank" rel="external">https://golang.org/doc/faq#goroutines</a></li>
+</ul>
 <h3 id="goroutine的调度">goroutine的调度</h3>
 ]]></content>
     <summary type="html">
