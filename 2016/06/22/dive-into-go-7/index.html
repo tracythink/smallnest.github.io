@@ -154,14 +154,25 @@ SimpleStmt = EmptyStmt | ExpressionStmt | SendStmt | IncDecStmt | Assignment | S
 <p>语句控制程序逻辑的运行。终止语句(terminating statement)代表结束当前程序逻辑单元的运行。<br>1、 A &quot;return&quot; or &quot;goto&quot; statement.<br>2、A call to the built-in function panic.<br>3、A block in which the statement list ends in a terminating statement.<br>4、 An &quot;if&quot; statement in which:</p>
 <ul>
 <li>the &quot;else&quot; branch is present, and</li>
-<li>both branches are terminating statements.<br>5、A &quot;for&quot; statement in which:<br>＊ there are no &quot;break&quot; statements referring to the &quot;for&quot; statement, and</li>
-<li>the loop condition is absent.<br>6、A &quot;switch&quot; statement in which:</li>
+<li>both branches are terminating statements.</li>
+</ul>
+<p>5、A &quot;for&quot; statement in which:</p>
+<ul>
+<li>there are no &quot;break&quot; statements referring to the &quot;for&quot; statement, and</li>
+<li>the loop condition is absent.</li>
+</ul>
+<p>6、A &quot;switch&quot; statement in which:</p>
+<ul>
 <li>there are no &quot;break&quot; statements referring to the &quot;switch&quot; statement,</li>
 <li>there is a default case, and</li>
-<li>the statement lists in each case, including the default, end in a terminating statement, or a possibly labeled &quot;fallthrough&quot; statement.<br>7、A &quot;select&quot; statement in which:</li>
-<li>there are no &quot;break&quot; statements referring to the &quot;select&quot; statement, and</li>
-<li>the statement lists in each case, including the default if present, end in a terminating statement.<br>8、A labeled statement labeling a terminating statement.</li>
+<li>the statement lists in each case, including the default, end in a terminating statement, or a possibly labeled &quot;fallthrough&quot; statement.</li>
 </ul>
+<p>7、A &quot;select&quot; statement in which:</p>
+<ul>
+<li>there are no &quot;break&quot; statements referring to the &quot;select&quot; statement, and</li>
+<li>the statement lists in each case, including the default if present, end in a terminating statement.</li>
+</ul>
+<p>8、A labeled statement labeling a terminating statement.</p>
 <p>其它的语句都不会终止程序单元的执行。</p>
 <p>参考</p>
 <ul>
