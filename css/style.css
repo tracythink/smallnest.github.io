@@ -762,7 +762,7 @@ a.article-title:hover {
   padding: 0 0.25em;
   margin-left: -0.2em;
   margin-right: 0.2em;
-  letter-spacing: -0.2em;
+  letter-spacing: -0.1em;
   font-size: 1.8em;
   color: #e32d40;
 }
@@ -778,7 +778,7 @@ a.article-title:hover {
   padding: 0 0.25em;
   margin-left: -0.2em;
   margin-right: 0.2em;
-  letter-spacing: -0.2em;
+  letter-spacing: -0.1em;
   font-size: 1.6em;
 }
 .article-entry a {
