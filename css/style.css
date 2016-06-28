@@ -772,13 +772,13 @@ a.article-title:hover {
 }
 .article-entry h4:before {
   counter-increment: subsection;
-  content: counter(section) "\00a0\00a0\00a0.\00a0\00a0\00a0" counter(subsection);
+  content: counter(section) "." counter(subsection);
   display: inline-block;
   position: relative;
   padding: 0 0.25em;
   margin-left: -0.2em;
   margin-right: 0.2em;
-  letter-spacing: -0.1em;
+  letter-spacing: 0em;
   font-size: 1.6em;
 }
 .article-entry a {

@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-28T06:46:13.623Z</updated>
+  <updated>2016-06-28T06:55:37.573Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,12 +19,13 @@
     <link href="http://colobu.com/2016/06/27/dive-into-go-8/"/>
     <id>http://colobu.com/2016/06/27/dive-into-go-8/</id>
     <published>2016-06-27T08:21:43.000Z</published>
-    <updated>2016-06-28T04:15:47.000Z</updated>
+    <updated>2016-06-28T06:50:33.000Z</updated>
     <content type="html"><![CDATA[<p>本章介绍 go语句、goroutine调度。</p>
 <a id="more"></a>
 <h3 id="go_语句">go 语句</h3>
 <p>go语句用来产生一个新的goroutine，并执行一个函数，它的使用非常简单，就是在函数调用或者方法调用的前面加上go关键字即可。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure>
+<p>函数可以是已有函数、匿名函数、方法等,注意匿名方法(方法字面量)不要忘记调用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> foo(i <span class="typename">int</span>) <span class="typename">int</span> {</div><div class="line">	<span class="keyword">return</span> i * i</div><div class="line">}</div><div class="line"></div><div class="line">……</div><div class="line"></div><div class="line"><span class="keyword">go</span> foo<span class="number">(10</span>)</div><div class="line"><span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line"></div><div class="line">}()</div><div class="line"></div><div class="line"><span class="keyword">go</span> os.Open(<span class="string">"./test.txt"</span>)</div><div class="line"></div><div class="line">buf := bytes.NewBufferString(<span class="string">"hello world"</span>)</div><div class="line"><span class="keyword">go</span> buf.ReadString<span class="number">(0</span>)</div></pre></td></tr></table></figure>
 
 <h3 id="深入go语句">深入go语句</h3>
 <p>看下面一段代码,你觉得会输出什么:</p>
