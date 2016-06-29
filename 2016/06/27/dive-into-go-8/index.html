@@ -169,7 +169,7 @@
 
 <p>那么，加上上面一行，会输出什么?</p>
 <p>答案是 &quot;2 2 2&quot;,为什么呢？</p>
-<p>这是因为对于closure的情况(闭包closure的概念在很多语言中都有使用。在Go中，可以简单的认为匿名函数保持对外部变量的引用)，for循环的每次迭代都会使用相同的变量i，<br>这样每个goroutine都持有对相同的变量的引用，因为main gororutine 很快就执行了， 三个goroutine还没来得及执行，等它们执行的时候，i已经等于 2了，所以它们都打印出3来。</p>
+<p>这是因为对于closure的情况(闭包closure的概念在很多语言中都有使用。在Go中，可以简单的认为匿名函数保持对外部变量的引用)，for循环的每次迭代都会使用相同的变量i,这样每个goroutine都持有对相同的变量的引用，因为main gororutine 很快就执行了， 三个goroutine还没来得及执行，等它们执行的时候，i已经等于 2了，所以它们都打印出3来。</p>
 <p>我们可以稍微修改一下，让main goroutine不要执行那么快，每次迭代暂停1秒:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line">		fmt.Println(i)</div><div class="line">	}()</div><div class="line"></div><div class="line">	time.Sleep<span class="number">(1</span> * time.Second)</div><div class="line">}</div></pre></td></tr></table></figure>
 
