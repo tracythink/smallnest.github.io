@@ -177,11 +177,11 @@
 <p>但是我们无法精确控制goroutine的执行，如果期望输出结果总是使用当前的迭代的值，可以改造成下面的样子:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>(v <span class="typename">int</span>) {</div><div class="line">		fmt.Println(v)</div><div class="line">	}(i)</div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>输出结果为&quot;2 0 1&quot; (goroutine的执行顺序有可能不同)。</p>
+<p>输出结果为&quot;2 0 1&quot; (goroutine的执行顺序有可能不同,但是如果你看到最后一节的分析，这个执行顺序也能讲得通，最后一个输出2的goroutine作为runnext优先级最高，输出1的goroutine本来在runnext的位置，不幸被挤掉了，放在了本地队列的队尾)。</p>
 <p>如果你不想对匿名函数进行改造的话，也可以像下面的这样，生成一个局部变量:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 3</span>; i++ {</div><div class="line">	i := i</div><div class="line">	<span class="keyword">go</span> <span class="keyword">func</span>() {</div><div class="line">		fmt.Println(i)</div><div class="line">	}()</div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>输出 &quot;2 1 0&quot;, 注意我们使用一个同名的局部变量shadow了迭代的变量i。</p>
+<p>输出 &quot;2 0 1&quot;, 注意我们使用一个同名的局部变量shadow了迭代的变量i。</p>
 <p>参考:</p>
 <ul>
 <li><a href="https://golang.org/doc/faq#closures_and_goroutines" target="_blank" rel="external">https://golang.org/doc/faq#closures_and_goroutines</a></li>
