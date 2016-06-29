@@ -164,7 +164,7 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="title">fatal</span> <span class="built_in">error</span>: all goroutines are asleep - deadlock!</div></pre></td></tr></table></figure>
 
 <p>它的意思是所有的goroutine都已经执行完了，你的select还在那里阻塞着，不会有case等你执行的，所以有死锁的可能。Go强制杀死了这个等待，并抛出了一个错误。因此你可以忽略这个错误，它对我们前面的程序执行没有影响。</p>
-<p>如果你不想看到这个错误，你可以使用<code>sync.WaitGroup</code>或者像其它语言中的处理方法一样，从命令行读取一个值造成main goroutine阻塞，抑或加一行time.Sleep让main goroutine休眠较长的一个时间也可以：</p>
+<p>如果你不想看到这个错误，你可以使用<code>sync.WaitGroup</code>，或者像其它语言中的处理方法一样，从命令行读取一个值造成main goroutine阻塞，抑或加一行time.Sleep让main goroutine休眠较长的一个时间也可以：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">os.Stdin.Read(<span class="built_in">make</span>([]<span class="typename">byte</span>,<span class="number"> 1</span>))</div></pre></td></tr></table></figure>
 
 <p>那么，加上上面一行，会输出什么?</p>
