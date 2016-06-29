@@ -11,6 +11,9 @@
 <meta property="og:url" content="http://colobu.com/2016/06/27/dive-into-go-8/">
 <meta property="og:site_name" content="鸟窝">
 <meta property="og:description" content="本章介绍 go语句、goroutine调度。">
+<meta property="og:image" content="models.jpg">
+<meta property="og:image" content="p.jpg">
+<meta property="og:image" content="steal.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入Go语言 - 8">
 <meta name="twitter:description" content="本章介绍 go语句、goroutine调度。">
@@ -184,6 +187,45 @@
 <li><a href="https://golang.org/doc/faq#closures_and_goroutines" target="_blank" rel="external">https://golang.org/doc/faq#closures_and_goroutines</a></li>
 </ul>
 <h3 id="goroutine是什么">goroutine是什么</h3>
+<p>goroutine是Go语言独有的概念。</p>
+<p>并发和多线程编程总是被认为很困难，多少是由于它们的实现，对于线程和并发访问的控制很复杂。 Go语言并发的基础是goroutine和channel。<br>这些概念来源于著名计算机科学家C.A.R.Hoare的Communication Sequential Process （简称<a href="http://baike.baidu.com/subview/93641/8244751.htm" target="_blank" rel="external">CSP</a>)。<br>在该语言中，一个并发系统由若干并行运行的顺序进程组成，每个进程不能对其他进程的变量赋值。进程之间只能通过 一对通信原语实现协作：Q-&gt;x表示从进程Q输入一个值到变量x中；P&lt;-e表示把表达式e的值发送给进程P。当P进程执行Q-&gt;x， 同时Q进程执行P&lt;-e时，发生通信，e的值从Q进程传送给P进程的变量x。<br>Occam和Erlang基于CSP的理论实现的并发模型。</p>
+<p>Go也借鉴了CSP的理论，但又有所不同，最大的不同是Go显示地使用channel, channel在Go中是第一类的对象，goroutine通信完全通过通过channel实现的。<br>CSP模型中消息的分发是即时和同步的，Go的Channel则不同，消息会缓存在Channel中。</p>
+<p>我看到的一个有趣的项目是使用Go语言实现Hoare论文中的例子，有兴趣的朋友可以仔细观看，<a href="https://github.com/thomas11/csp" target="_blank" rel="external">csp</a>。</p>
+<p>幸运地是，这些实现的细节对于Go语言的学习和应用来说不是必须的，对于语言的设计者来说，倒是值得比较和研究和出论文。</p>
+<p>但是，对于开发者来说，至少应该明白goroutine和线程的不同，为什么一个Go应用可以存在成千上万个goroutine为线程确不行。</p>
+<p><strong>goroutine vs thread</strong><br>对于线程来讲，Java的线程是最有名了。我们从三个方面进行比较：<br>1、内存占用<br>goroutine并不需要太多太多的内存占用，初始只需2kB的栈空间即可(自Go 1.4起)，按照需要可以增长。</p>
+<p>线程初始1MB，并且会分配一个防护页(guard page)。</p>
+<p>在使用Java开发服务器的过程中经常会遇到request per thread的问题，如果为每个请求都分配一个线程的话，大并发的情况下服务器很快就死掉，因为内存不够了，所以很多Java框架比如Netty都会使用线程池来处理请求，而不会让线程任意增长。</p>
+<p>而使用goroutine则没有这个问题，你页可以看到官方的net/http库就是使用request per goroutine这种模式进行处理的，内存占用不会是问题。</p>
+<p>2、对象的创建和销毁<br>线程的创建和销毁肯定有花费，因为需要从OS中请求／返还资源。</p>
+<p>而goroutine的创建和销毁花费很少，因为它是用户态的操作。并且Go语言也不提供goroutine的手工管理。</p>
+<p>3、切换时间<br>当线程阻塞时，其它的线程进可能被执行，这叫做线程的切换。切换的时候，调度器需要保存当前阻塞的线程的状态，恢复要执行的线程状态，包括所有的寄存器，16个通用寄存器、程序计数器、栈指针、段寄存器、16个XMM寄存器、FP协处理器、16个 AVX寄存器、所有的MSR等等。</p>
+<p>goroutine的保存和恢复只需要三个寄存器：程序计数器、栈指针和DX寄存器。因为goroutine之间共享堆空间，也共享栈空间，所以只需把goroutine的栈指针和程序执行到那里的信息保存和恢复即可，花费很低。</p>
+<p>通过上面三个方面的分析，可以看到goroutine比线程有更多的优势。实际上Go使用少量线程来执行这些goroutine,通过GOMAXPROCS环境变量可以控制有多少线程可以并发执行用户态的代码。由于系统调用而被阻塞的线程不受这个变量的限制。以前版本的Go中这个变量为1,自Go 1.5后它的默认值为CPU的核数。</p>
+<blockquote>
+<p><strong>进程</strong>拥有自己独立的堆和栈，既不共享堆，亦不共享栈，进程由操作系统调度。<br><strong>线程</strong>拥有自己独立的栈和共享的堆，共享堆，不共享栈，线程亦由操作系统调度(标准线程是的)。<br><strong>协程</strong>和线程一样共享堆，不共享栈，协程由程序员在协程的代码里显示调度。</p>
+</blockquote>
+<p><strong>goroutine vs coroutine</strong><br>两个类似，都是共享堆，不共享栈，切换的时候需要保存和恢复栈信息。</p>
+<p>但是coroutine(协程)需要显示地控制goroutine的转换，程序员需要在切换的地方调用<code>yield</code>让度当前的coroutine的执行，这样其它coroutine才有可能在这个线程中执行,等暂停的coroutine恢复执行的时候，它会接着上次暂停的地方继续执行，而不像普通的函数从头开始执行。 看一段lua的coroutine代码：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span> <span class="params">(a)</span></span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"foo"</span>, a)</div><div class="line">    <span class="keyword">return</span> <span class="built_in">coroutine</span>.yield(<span class="number">2</span>*a)</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  co = <span class="built_in">coroutine</span>.create(<span class="function"><span class="keyword">function</span> <span class="params">(a,b)</span></span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"co-body"</span>, a, b)</div><div class="line">        <span class="keyword">local</span> r = foo(a+<span class="number">1</span>)</div><div class="line">        <span class="built_in">print</span>(<span class="string">"co-body"</span>, r)</div><div class="line">        <span class="keyword">local</span> r, s = <span class="built_in">coroutine</span>.yield(a+b, a-b)</div><div class="line">        <span class="built_in">print</span>(<span class="string">"co-body"</span>, r, s)</div><div class="line">        <span class="keyword">return</span> b, <span class="string">"end"</span></div><div class="line">  <span class="keyword">end</span>)</div><div class="line"></div><div class="line">  <span class="built_in">print</span>(<span class="string">"main"</span>, <span class="built_in">coroutine</span>.resume(co, <span class="number">1</span>, <span class="number">10</span>))</div><div class="line">  <span class="built_in">print</span>(<span class="string">"main"</span>, <span class="built_in">coroutine</span>.resume(co, <span class="string">"r"</span>))</div><div class="line">  <span class="built_in">print</span>(<span class="string">"main"</span>, <span class="built_in">coroutine</span>.resume(co, <span class="string">"x"</span>, <span class="string">"y"</span>))</div><div class="line">  <span class="built_in">print</span>(<span class="string">"main"</span>, <span class="built_in">coroutine</span>.resume(co, <span class="string">"x"</span>, <span class="string">"y"</span>))</div></pre></td></tr></table></figure>
+
+<p>输出:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">co-<span class="keyword">body</span> <span class="number">1</span>       <span class="number">10</span></div><div class="line">foo     <span class="number">2</span></div><div class="line"></div><div class="line">main    <span class="literal">true</span>    <span class="number">4</span></div><div class="line">co-<span class="keyword">body</span> r</div><div class="line">main    <span class="literal">true</span>    <span class="number">11</span>      -<span class="number">9</span></div><div class="line">co-<span class="keyword">body</span> x       y</div><div class="line">main    <span class="literal">true</span>    <span class="number">10</span>      end</div><div class="line">main    <span class="literal">false</span>   cannot resume dead coroutine</div></pre></td></tr></table></figure>
+
+<p>可以看到coroutine切换都是通过代码中的yield触发的。</p>
+<p>goroutine也是由一组线程执行，也会暂停，也会继续执行，但是这个控制不是程序员实现安排好的，它是由go运行时后台控制的。goroutine的调度不能手工的执行，这是和coroutine最大的区别。当goroutine阻塞的时候，就有可能让度出线程以便其它goroutine执行，以下几种情况goroutine可能暂停自己的运行：</p>
+<ul>
+<li>调用runtine.Gosched()将当前goroutine放入到全局队列</li>
+<li>调用runtine.Goexit，终止G任务</li>
+<li>网络读取</li>
+<li>sleep</li>
+<li>channel操作</li>
+<li>调用sync包中的对象进行阻塞</li>
+<li>其它gouroutine被阻塞的情况,比如io读取,空无限循环，长时间占用线程执行的goroutine</li>
+</ul>
+<p>利用goroutine和channel也可以实现cororutine,比如下面的<a href="https://github.com/Jxck/goroutine-sample/blob/master/coroutine.go" target="_blank" rel="external">代码</a>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> f(yield <span class="keyword">chan</span> <span class="typename">string</span>) {</div><div class="line">	yield &lt;- <span class="string">"one"</span></div><div class="line">	yield &lt;- <span class="string">"two"</span></div><div class="line">	yield &lt;- <span class="string">"three"</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	co := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="typename">string</span>)</div><div class="line">	<span class="keyword">go</span> f(co)</div><div class="line">	log.Println(&lt;-co) <span class="comment">// one</span></div><div class="line">	log.Println(&lt;-co) <span class="comment">// two</span></div><div class="line">	log.Println(&lt;-co) <span class="comment">// three</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
 <p>参考</p>
 <ul>
 <li><a href="https://talks.golang.org/2012/concurrency.slide" target="_blank" rel="external">https://talks.golang.org/2012/concurrency.slide</a></li>
@@ -192,8 +234,54 @@
 <li><a href="http://stackoverflow.com/questions/18058164/is-a-go-goroutine-a-coroutine" target="_blank" rel="external">http://stackoverflow.com/questions/18058164/is-a-go-goroutine-a-coroutine</a></li>
 <li><a href="http://www.golangpatterns.info/concurrency/coroutines" target="_blank" rel="external">http://www.golangpatterns.info/concurrency/coroutines</a></li>
 <li><a href="https://golang.org/doc/faq#goroutines" target="_blank" rel="external">https://golang.org/doc/faq#goroutines</a></li>
+<li><a href="https://blog.golang.org/share-memory-by-communicating" target="_blank" rel="external">https://blog.golang.org/share-memory-by-communicating</a></li>
+<li><a href="http://stackoverflow.com/questions/32651557/golang-main-difference-from-csp-language-by-hoare" target="_blank" rel="external">http://stackoverflow.com/questions/32651557/golang-main-difference-from-csp-language-by-hoare</a></li>
+<li><a href="http://www.informit.com/articles/printerfriendly/1768317" target="_blank" rel="external">http://www.informit.com/articles/printerfriendly/1768317</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Coroutine" target="_blank" rel="external">https://en.wikipedia.org/wiki/Coroutine</a></li>
+<li><a href="http://www.jianshu.com/p/36e246c6153d" target="_blank" rel="external">http://www.jianshu.com/p/36e246c6153d</a></li>
+<li><a href="https://github.com/golang/go/issues/4056" target="_blank" rel="external">https://github.com/golang/go/issues/4056</a></li>
+<li><a href="http://stackoverflow.com/questions/28354141/c-code-and-goroutine-scheduling" target="_blank" rel="external">http://stackoverflow.com/questions/28354141/c-code-and-goroutine-scheduling</a></li>
 </ul>
 <h3 id="goroutine的调度">goroutine的调度</h3>
+<p>goroutine调度(Scheduling)的文章网上非常多了，而且分析的都很深入。本文重点的介绍其中的一些细节。</p>
+<p>goroutine调度器有三个重要的数据结构，都是以单字母命名: G、P、M,因为Golang以及实现了自举，所以绝大部分的代码都是由Go本身实现的，少部分的以汇编实现，因为你已经由Go的基础知识了，所以你可以查看这些实现的代码不会感到特别困难。</p>
+<p><img src="models.jpg" alt=""></p>
+<ul>
+<li>M代表系统线程(Machine)，由操作系统管理。</li>
+<li>G代表goroutine,包括栈／指令指针以及其它对调度goroutine有用的信息。</li>
+<li>P代表处理器(processor),注意不是CPU处理器，而是调度处理器，包含调度的上下文。</li>
+</ul>
+<p>这三个个对象的数据结构定义在Go源代码的<a href="https://golang.org/src/runtime/runtime2.go" target="_blank" rel="external">src/runtime/runtime2.go</a>中定义，另外还包括一个很重要的数据结构schedt。</p>
+<p>P必须和M组合起来执行G，但是两者也并不是完全1:1对应，通常情况下P的数量固定和CPU的核数一样(GOMAXPROCS参数)，M则是按需创建，比如当M因为陷入系统调用而长时间阻塞的时候，P就会被监控线程抢回，去新建或者唤醒另一个M去执行，因此M的数量会增加，系统中可能存在一些阻塞的M。</p>
+<p>当一个G被创建的时候，它可能被放入到一个P的本地队列或者全局队列中：<br><img src="p.jpg" alt=""></p>
+<p>由于goroutine的执行的时间不会一样，goroutine不可能均匀地分布在所有的P的本地队列中，如果其中的一个P执行地很快，它的队列中没有其它的gouroutine需要执行了，它就会从全局队列中拿一批goroutine过来。</p>
+<p>如果全局队列中也没有要执行的goroutine，那么这个P可能要从其它的P中“偷”一些goroutine过来。</p>
+<p>这样设计的目的就是不要让一部分P忙的要死，另外一部分P确很清闲，这是一个balance的过程。<br><img src="steal.jpg" alt=""></p>
+<p>编译器会将&quot;go func(……){}(……)&quot;翻译成&quot;newproc&quot;调用,这个方法在runtime/proc.go中定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Create a new g running fn with siz bytes of arguments.</span></div><div class="line"><span class="comment">// Put it on the queue of g's waiting to run.</span></div><div class="line"><span class="comment">// The compiler turns a go statement into a call to this.</span></div><div class="line"><span class="comment">// Cannot split the stack because it assumes that the arguments</span></div><div class="line"><span class="comment">// are available sequentially after &fn; they would not be</span></div><div class="line"><span class="comment">// copied if a stack split occurred.</span></div><div class="line"><span class="comment">//go:nosplit</span></div><div class="line"><span class="keyword">func</span> newproc(siz <span class="typename">int32</span>, fn *funcval) {</div><div class="line">	argp := add(unsafe.Pointer(&fn), sys.PtrSize)</div><div class="line">	pc := getcallerpc(unsafe.Pointer(&siz))</div><div class="line">	systemstack(<span class="keyword">func</span>() {</div><div class="line">		newproc1(fn, (*<span class="typename">uint8</span>)(argp), siz,<span class="number"> 0</span>, pc)</div><div class="line">	})</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>它的创建G的主要逻辑在newproc1中实现，并调用<code>runqput</code>将创建的G放入到队列中。注意G是可以重用的，如果有重用的G，则选择一个，否则创建一个新的，而且它也有本地复用链表和全局复用链表。</p>
+<p><code>runqput</code>首先尝试将G放入到P本地队列的本地队列中，而且在不设置&quot;-race&quot;的情况下,可能会尝试将这个G放在p.runnext中，作为下一个优先处理的G，而原先的runnext放回队尾。如果本地队列已满，则放入到全局队列中，而且还会将本地队列的一部分放入到全局队列中。</p>
+<p>任务队列的优先级分三种：P.runnext、P.runq和全局的Schedt.runq。</p>
+<p><code>schedule</code>方法用来实现goroutine的调用，你可以在proc.go文件中搜索对它的调用。</p>
+<p>如果你浏览schedule()方法的实现，可以看到每隔一定时间，会先尝试从全局队列中获取g去执行，这样就避免全局队列中的g没机会执行。</p>
+<p>然后尝试本地队列中获取g, 依照优先级选择g,先是P.runnext,然后从队列的头部依次获取。</p>
+<p>如果本地队列没有g,则调用<code>findrunnable</code>方法从其它地方获取,这是一个block方法，直到有g获取到。<br>findrunnable首先从本地队列获取(runqget方法)，然后从全局队列获取(globrunqget),然后检查netpoll的goroutine,<br>如果还没有，随机选择一个P,偷一些任务过来(runqsteal方法，如果“饿”的厉害，连别人的runnext都偷过来)。<br>具体的获取过程你可以查看每个选择的方法。</p>
+<p>你可以通过schedtrace调试参数查看Go调度的细节：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GOMAXPROCS<span class="number">=1</span> GODEBUG=schedtrace<span class="number">=1000</span> ./example</div></pre></td></tr></table></figure>
+
+<p>详细的文章可以查看我翻译的William Kennedy的<a href="http://colobu.com/2016/04/19/Scheduler-Tracing-In-Go/" target="_blank" rel="external">Scheduler Tracing In Go</a></p>
+<p>参考</p>
+<ul>
+<li><a href="https://golang.org/pkg/runtime/" target="_blank" rel="external">https://golang.org/pkg/runtime/</a></li>
+<li><a href="http://www.cs.columbia.edu/~aho/cs6998/reports/12-12-11_DeshpandeSponslerWeiss_GO.pdf" target="_blank" rel="external">http://www.cs.columbia.edu/~aho/cs6998/reports/12-12-11_DeshpandeSponslerWeiss_GO.pdf</a></li>
+<li><a href="https://morsmachine.dk/go-scheduler" target="_blank" rel="external">https://morsmachine.dk/go-scheduler</a></li>
+<li><a href="http://studygolang.com/articles/6070" target="_blank" rel="external">http://studygolang.com/articles/6070</a></li>
+<li><a href="http://www.slideshare.net/matthewrdale/demystifying-the-go-scheduler" target="_blank" rel="external">http://www.slideshare.net/matthewrdale/demystifying-the-go-scheduler</a></li>
+<li><a href="https://github.com/qyuhen/book/blob/master/Go%201.5%20%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90.pdf" target="_blank" rel="external">https://github.com/qyuhen/book/blob/master/Go%201.5%20%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90.pdf</a></li>
+<li><a href="https://www.goinggo.net/2015/02/scheduler-tracing-in-go.html" target="_blank" rel="external">https://www.goinggo.net/2015/02/scheduler-tracing-in-go.html</a></li>
+<li><a href="https://tiancaiamao.gitbooks.io/go-internals/content/zh/05.1.html" target="_blank" rel="external">https://tiancaiamao.gitbooks.io/go-internals/content/zh/05.1.html</a></li>
+</ul>
 
       
     </div>
