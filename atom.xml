@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-30T10:23:20.585Z</updated>
+  <updated>2016-06-30T10:31:27.350Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://colobu.com/2016/06/30/dive-into-go-10/"/>
     <id>http://colobu.com/2016/06/30/dive-into-go-10/</id>
     <published>2016-06-30T02:57:02.000Z</published>
-    <updated>2016-06-30T10:22:16.000Z</updated>
+    <updated>2016-06-30T10:31:21.000Z</updated>
     <content type="html"><![CDATA[<p>本章介绍Go如何调用C代码，以及如何调用动态链接库。</p>
 <p>如果你正准备使用Go开发你的程序，或者你正将一个C构建的项目转换成Go项目，请尽量使用Go构建你的项目，而不是偷巧的导入C代码，尽量保持Go项目的纯粹，原因可以查看<a href="http://www.oschina.net/translate/cgo-is-not-go" target="_blank" rel="external">cgo 和 Go 语言是两码事</a>,文末的参考文档中也有这篇文章的原始英文。</p>
 <p>但是，有些情况下，我们不得不使用C代码构建，那么我们就可以使用cgo技术。</p>
@@ -131,6 +131,9 @@ void * -> unsafe.Pointer
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">h, err := windows.LoadLibrary(<span class="string">"kernel32.dll"</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">    abort(<span class="string">"LoadLibrary"</span>, err)</div><div class="line">}</div><div class="line"><span class="keyword">defer</span> windows.FreeLibrary(h)</div><div class="line">proc, err := windows.GetProcAddress(h, <span class="string">"GetVersion"</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">    abort(<span class="string">"GetProcAddress"</span>, err)</div><div class="line">}</div><div class="line">r, _, _ := syscall.Syscall(<span class="typename">uintptr</span>(proc),<span class="number"> 0</span>,<span class="number"> 0</span>,<span class="number"> 0</span>,<span class="number"> 0</span>)</div><div class="line">major := <span class="typename">byte</span>(r)</div><div class="line">minor := <span class="typename">uint8</span>(r &gt;&gt;<span class="number"> 8</span>)</div><div class="line">build := <span class="typename">uint16</span>(r &gt;&gt;<span class="number"> 16</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"windows version "</span>, major, <span class="string">"."</span>, minor, <span class="string">" (Build "</span>, build, <span class="string">")\n"</span>)</div></pre></td></tr></table></figure>
 
 <p>其它平台我还没有发现官方的调用.so或者.dylib的方法， 但是我看到有第三方的作者写了相应的库，提供类似C中的dlopen和dlsym方法：<br><a href="https://github.com/rainycape/dl" target="_blank" rel="external">Runtime dynamic library loader</a></p>
+<p>还有<a href="https://bitbucket.org/binet/go-ffi" target="_blank" rel="external">go-ffi</a>,也提供了dlopen和dlsym的功能。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// dl-open a library: here, libm on macosx</span></div><div class="line">lib, err := ffi.NewLibrary(<span class="string">"libm.dylib"</span>)</div><div class="line">handle_err(err)</div><div class="line"></div><div class="line"><span class="comment">// get a handle to 'cos', with the correct signature</span></div><div class="line">cos, err := lib.Fct(<span class="string">"cos"</span>, ffi.Double, []Type{ffi.Double})</div><div class="line">handle_err(err)</div><div class="line"></div><div class="line"><span class="comment">// call it</span></div><div class="line">out := cos<span class="number">(0</span>.).Float()</div><div class="line"><span class="built_in">println</span>(<span class="string">"cos(0.)="</span>, out)</div><div class="line"></div><div class="line">err = lib.Close()</div><div class="line">handle_err(err)</div></pre></td></tr></table></figure>
+
 <p>参考</p>
 <ul>
 <li><a href="https://golang.org/cmd/cgo/" target="_blank" rel="external">https://golang.org/cmd/cgo/</a></li>
