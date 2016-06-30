@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-30T02:23:53.066Z</updated>
+  <updated>2016-06-30T02:54:29.082Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://colobu.com/2016/06/29/dive-into-go-9/"/>
     <id>http://colobu.com/2016/06/29/dive-into-go-9/</id>
     <published>2016-06-29T08:03:25.000Z</published>
-    <updated>2016-06-30T02:15:09.000Z</updated>
+    <updated>2016-06-30T02:36:27.000Z</updated>
     <content type="html"><![CDATA[<p>本章介绍Go语言的其它部分，算是Go语言规范的深入学习的收尾工作。</p>
 <a id="more"></a>
 <h3 id="内建函数">内建函数</h3>

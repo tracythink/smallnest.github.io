@@ -756,7 +756,7 @@ a.article-title:hover {
 }
 .article-entry h3:before {
   counter-increment: section;
-  content: counter(section) "\00a0";
+  content: counter(section) "\00a0/";
   display: inline-block;
   position: relative;
   padding: 0 0.25em;
