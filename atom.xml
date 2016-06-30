@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-06-30T02:54:29.082Z</updated>
+  <updated>2016-06-30T10:23:20.585Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -13,6 +13,146 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[深入Go语言 - 10]]></title>
+    <link href="http://colobu.com/2016/06/30/dive-into-go-10/"/>
+    <id>http://colobu.com/2016/06/30/dive-into-go-10/</id>
+    <published>2016-06-30T02:57:02.000Z</published>
+    <updated>2016-06-30T10:22:16.000Z</updated>
+    <content type="html"><![CDATA[<p>本章介绍Go如何调用C代码，以及如何调用动态链接库。</p>
+<p>如果你正准备使用Go开发你的程序，或者你正将一个C构建的项目转换成Go项目，请尽量使用Go构建你的项目，而不是偷巧的导入C代码，尽量保持Go项目的纯粹，原因可以查看<a href="http://www.oschina.net/translate/cgo-is-not-go" target="_blank" rel="external">cgo 和 Go 语言是两码事</a>,文末的参考文档中也有这篇文章的原始英文。</p>
+<p>但是，有些情况下，我们不得不使用C代码构建，那么我们就可以使用cgo技术。</p>
+<a id="more"></a>
+<h3 id="Go代码调用C函数">Go代码调用C函数</h3>
+<p>cgo可以让Go代码调用C代码。</p>
+<p>C代码被封装进“package C”中，你可以访问C实现的类型<code>C.size_t</code>、 变量<code>C.stdout</code> 和 方法<code>C.putchar</code>,即使它们的首字母是小写的。</p>
+<p>在代码<code>import &quot;C&quot;</code>之前有注释(紧接着这个import),那么这个注释称之为<code>preamble</code>(序言、开场白)。它可以包含编译C package的头文件:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">*/</div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	C.srandom(C.<span class="typename">uint</span>(time.Now().UTC().UnixNano()))</div><div class="line">	<span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 10</span>; i++ {</div><div class="line">		fmt.Printf(<span class="string">"%d "</span>, <span class="typename">int</span>(C.random()))</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>preamble还可以包含C代码，你可以在C代码中定义变量和函数，它们可以在Go代码中通过包C来引用。C代码中的静态变量不能在G中使用，但是静态函数可以。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> cgoexample</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">void myprint(char* s) {</div><div class="line">    printf("%s\n", s);</div><div class="line">}</div><div class="line">*/</div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"unsafe"</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> Example() {</div><div class="line">    cs := C.CString(<span class="string">"Hello from stdio\n"</span>)</div><div class="line">    C.myprint(cs)</div><div class="line">    C.free(unsafe.Pointer(cs))</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>你可以在Go官方代码库中看到这样的例子， 比如<a href="https://github.com/golang/go/tree/master/misc/cgo/stdio" target="_blank" rel="external">misc/cgo/stdio</a>。</p>
+<p>工具<a href="https://golang.org/cmd/cgo/" target="_blank" rel="external">cmd/tool</a>将包含导入包C的Go文件转换成几个Go文件和C文件。如果你运行<code>go tool cgo main1.go</code>转换上面的例子，你会发现在本地文件夹下生成了一个_obj的文件夹：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">smallnestMBP:ch9 smallnest$ ls _obj/</div><div class="line">_cgo_.o         _cgo_export.h   _cgo_gotypes.go main1.cgo1.go</div><div class="line">_cgo_export.<span class="built_in">c</span>   _cgo_flags      _cgo_main.<span class="built_in">c</span>     main1.cgo2.<span class="built_in">c</span></div></pre></td></tr></table></figure>
+
+<p>它会包含一个编译器在编译这些C文件后生成的目标文件<em>cgo</em>.o。</p>
+<p>在实际开发中，我们不会直接调用cgo工具，因为<code>go build</code>会自动完成这一切，让我们编译这个程序<code>go build main1.go</code>或者直接运行<code>go run main1.go</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">smallnestMBP:ch9 smallnest$ <span class="keyword">go</span> run main1.<span class="keyword">go</span><span class="number"></span></div><div class="line">991076780<span class="number"> 1985136578</span><span class="number"> 1492569085</span><span class="number"> 555504684</span><span class="number"> 104261718</span><span class="number"> 1646436258</span><span class="number"> 1683793209</span><span class="number"> 1521143308</span><span class="number"> 547922631</span><span class="number"> 1875795366</span></div></pre></td></tr></table></figure>
+
+<p>这是引用C的标准库,我们不需要额外的编译参数设置，要引入特定的库，我们还需要设置一些额外的参数。</p>
+<p>我们可以使用<code>#cgo</code>指令符(directive)为C/C++编译器提供 <strong>CFLAGS</strong>、 <strong>CPPFLAGS</strong>、<strong>CXXFLAGS</strong> 和 <strong>LDFLAGS</strong> 设置,同时也可以提供一些编译的<a href="https://golang.org/pkg/go/build/#hdr-Build_Constraints" target="_blank" rel="external">约束</a>，比如为特定的平台的参数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// #cgo CFLAGS: -DPNG_DEBUG=1</span></div><div class="line"><span class="comment">// #cgo amd64 386 CFLAGS: -DX86=1</span></div><div class="line"><span class="comment">// #cgo LDFLAGS: -lpng</span></div><div class="line"><span class="comment">// #include &lt;png.h&gt;</span></div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div></pre></td></tr></table></figure>
+
+<p>开发C/C++程序的程序员和经常使用make工具链的开发者应该对这些参数很熟悉了， flags给编译器提供开关，比如指定头文件的位置等， ldflags提供链接选项，比如提供库的位置。</p>
+<p><code>CFLAGS</code> 用来给 <strong>C</strong> 编译器提供开关。<br><code>CXXFLAGS</code> 用来给 <strong>C++</strong> 编译器提供开关。<br><code>CPPFLAGS</code> 用来给C预处理提供开关，对 <strong>C</strong> / <strong>C++</strong> 都有效。<br><code>LDFLAGS</code> 用来指定链接选项,比如链接库的位置，以及使用哪些链接库。</p>
+<p>我们在编译C文件的时候，一般会经过四个步骤： 预处理、编译、汇编和链接，你可以看到这些开发参数的用处:</p>
+<figure class="highlight make"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 预处理</span></div><div class="line">$(CC) $(CPPFLAGS) $(CFLAGS) -E main.c  -o main.i</div><div class="line"></div><div class="line"><span class="comment">// 编译</span></div><div class="line">$(CC) $(CPPFLAGS) $(CFLAGS) -S main.i  -o main.s</div><div class="line"></div><div class="line"><span class="comment">// 汇编， "-c"选项表示不执行链接步骤</span></div><div class="line">$(CC) $(CPPFLAGS) $(CFLAGS) -c main.s  -o main.o</div><div class="line"></div><div class="line"><span class="comment">// 也可以将前面的三个步骤合起来(预处理,编译,汇编)</span></div><div class="line">$(CC) $(CPPFLAGS) $(CFLAGS) -c main.c -o main.o</div><div class="line"></div><div class="line"><span class="comment">// 然后将目标文件链接为最终的结果</span></div><div class="line">$(CC) $(LDFLAGS) main.o   -o main</div><div class="line"></div><div class="line"><span class="comment">// 也可以一次完成上面的步骤。</span></div><div class="line">$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) main.c   -o main</div></pre></td></tr></table></figure>
+
+<p>gcc可用的开关可以查看它的文档: <a href="https://gcc.gnu.org/onlinedocs/gcc/Invoking-GCC.html#Invoking-GCC" target="_blank" rel="external">Invoking-GCC</a>。</p>
+<p><code>CPPFLAGS</code>、<code>LDFLAGS</code>可以通过 <strong>pkg-config</strong> 工具获得：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// #cgo pkg-config: png cairo</span></div><div class="line"><span class="comment">// #include &lt;png.h&gt;</span></div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div></pre></td></tr></table></figure>
+
+<p>编译的时候，四个环境变量会增加它们的flag到编译参数中，这适合设置通用的，包无关的编译参数。</p>
+<p>还有一个变量 ${SRCDIR} 用来指代原文件所在的文件夹的绝对路径，这允许你将预先编译好的静态库放在本地文件夹中，让编译器可以找到这些库以便正确的链接。比如包foo在文件夹/go/src/foo下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// #cgo LDFLAGS: -L${SRCDIR}/libs -lfoo</span></div></pre></td></tr></table></figure>
+
+<p>上面的指令等价于:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// #cgo LDFLAGS: -L/go/src/foo/libs -lfoo</span></div></pre></td></tr></table></figure>
+
+<p>可以看一个使用libsqlite3库的例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">#cgo pkg-config: sqlite3</div><div class="line"></div><div class="line">#include &lt;sqlite3.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">*/</div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> Conn <span class="keyword">struct</span> {</div><div class="line">	db *C.sqlite3</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	<span class="keyword">var</span> c Conn</div><div class="line">	fmt.Println(c.db)</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>实际上，你不使用<code>#cgo pkg-config: sqlite3</code>也可以，因为在我们的机器上(Mac OS X)，libsqlite3被安装在标准的路径中，库在/usr/lib中，头文件安装在/usr/include文件下，如果你为PKG_CONFIG_PATH指定了特殊的文件夹，你可以使用这个指令:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">smallnestMBP:ch9 smallnest$ pkg-config --libs --cflags protobuf</div><div class="line">-D_THREAD_SAFE -I<span class="regexp">/usr/</span>local<span class="regexp">/Cellar/</span>protobuf<span class="regexp">/2.6.1/i</span>nclude -L<span class="regexp">/usr/</span>local<span class="regexp">/Cellar/</span>protobuf<span class="regexp">/2.6.1/</span>lib -lprotobuf -D_THREAD_SAFE</div></pre></td></tr></table></figure>
+
+<p>当Go工具访问一个或者多个Go文件导入包C的时候， 它也会查找其它的非Go的文件并把它们编译到Go包中 以 <code>.c</code>, <code>.s</code>, <code>.S</code>结尾的C文件或者汇编文件使用C编译器编译，以<code>.cc</code>, <code>.cpp</code>, <code>.cxx</code>结尾的文件以C++编译器编译以<code>.h</code>, <code>.hh</code>, <code>.hpp</code>, <code>.hxx</code>文件不会独立编译，但是这些头文件如果有改动，相应的C和C++文件会重新被编译。默认的C和C++编译器可以通过CC 和 CXX 环境变量改变。</p>
+<p>所以文件夹下的汇编语言也可以被编译。</p>
+<p>交叉编译的时候cgo被禁止，如果想启用，设置CGO_ENABLED＝1。还需要额外的设置，比如C交叉编译器。</p>
+<p>下面以一个计算圆周率的前1000位的例子看看我们自己实现的C库如何被我们的 Go代码实现 (假定所有的文件都在同一个文件夹下，这样编译和使用动态库时比较方便)：<br>首先是计算Pi的C代码 <code>pi.c</code>，函数calc用来计算Pi的值，返回结果是一个C的字符串：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> a=<span class="number">10000</span>, b, c=<span class="number">2800</span>, d, e, f[<span class="number">2801</span>], g,i;</div><div class="line"><span class="keyword">char</span> r[<span class="number">1000</span>];</div><div class="line"><span class="keyword">char</span>* pr = r;</div><div class="line"></div><div class="line"><span class="keyword">char</span>* calc() {</div><div class="line">	<span class="keyword">for</span>(;b-c;)</div><div class="line">	f[b++]=a/<span class="number">5</span>;</div><div class="line">	<span class="comment">//for(;d=0,g=c*2;c-=14,printf("%.4d",e+d/a),e=d%a)</span></div><div class="line">	<span class="keyword">for</span>(;d=<span class="number">0</span>,g=c*<span class="number">2</span>;c-=<span class="number">14</span>,<span class="built_in">sprintf</span>(pr,<span class="string">"%.4d"</span>,e+d/a),pr +=<span class="number">4</span>,e=d%a)</div><div class="line">	<span class="keyword">for</span>(b=c;d+=f[b]*a,f[b]=d%--g,d/=g--,--b;d*=b);</div><div class="line">	<span class="keyword">return</span> r;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>编译成动态库:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -shared <span class="operator">-f</span>PIC -olibpi.dylib pi.c</div></pre></td></tr></table></figure>
+
+<p>定义一个头文件<code>pi.h</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span>* calc();</div></pre></td></tr></table></figure>
+
+<p>我们可以写一个C程序 <code>test.c</code> 调用这个动态库，测试一下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "pi.h"</span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main() {</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, calc());</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>编译执行一下，确保动态库没有问题:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -L. -I. -lpi <span class="keyword">test</span>.c  -o <span class="keyword">test</span></div></pre></td></tr></table></figure>
+
+<p>现在就可以在Go代码中使用这个库了。写一个Go文件 <code>main3.go</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">#cgo CFLAGS: -I${SRCDIR}</div><div class="line">#cgo LDFLAGS: -L${SRCDIR} -lpi</div><div class="line"></div><div class="line">#include "pi.h"</div><div class="line">*/</div><div class="line"><span class="keyword">import</span> <span class="string">"C"</span></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	fmt.Println(<span class="string">"计算PI值:"</span>)</div><div class="line">	v := C.GoString(C.calc())</div><div class="line">	fmt.Println(v)</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>编译：<code>go build main3.go</code>,因为动态库和生成的可执行文件<code>main3</code>在同一个目录下，没有问题，执行main3:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">smallnestMBP:</span>ch9 smallnest<span class="variable">$ </span>./main3</div><div class="line">计算<span class="constant">PI</span>值<span class="symbol">:</span></div><div class="line"><span class="number">31415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185</span></div></pre></td></tr></table></figure>
+
+<p>上面这个计算Pi的例子我们将C的字符串转换成Go的字符串。 cgo定义了Go和C之间的类型对应关系。</p>
+<ul>
+<li>如果C的struct的字段类型是Go的关键字,如<code>type</code>, 那么在Go代码中可以在字段前加关键字如<code>x._type</code></li>
+<li>C中的整数类型已经在包C中定义，如<code>C.char</code>、<code>C.short</code>、<code>C.ushort</code>、<code>C.int</code>、<code>C.uint</code>、<code>C.longlong</code>、<code>C.float</code>,不一一列举，请看参考文档1</li>
+<li>访问C的<code>struct</code>、<code>union</code>、<code>enum</code>类型需要加类型前缀<code>struct_</code>、<code>union_</code>、<code>enum_</code>，如C.struct_stat</li>
+<li>访问C中的类型T的size用 C.sizeof_T，如C.sizeof_struct_stat</li>
+<li>Go不支持C的union的概念，只是把它作为相同长度的字节数组</li>
+<li>Go的Struct不能嵌入C的类型</li>
+<li>Go的API不应该再暴露C的类型给外部</li>
+<li>调用C的函数可以进行多值赋值，一个值作为返回值，一个作为errno</li>
+<li>当前不支持C的函数指针</li>
+<li>C中参数是固定长度的数组，可以把数组名传递给函数，但是Go代码调用中必须显示地将指针指向数组的第一个元素,如C.f(&amp;C.x[0])</li>
+</ul>
+<p>对应的类型转换：</p>
+<pre class="highlight">
+char -->  C.char -->  byte
+signed char -->  C.schar -->  int8
+unsigned char -->  C.uchar -->  uint8
+short int -->  C.short -->  int16
+short unsigned int -->  C.ushort -->  uint16
+int -->  C.int -->  int
+unsigned int -->  C.uint -->  uint32
+long int -->  C.long -->  int32 or int64
+long unsigned int -->  C.ulong -->  uint32 or uint64
+long long int -->  C.longlong -->  int64
+long long unsigned int -->  C.ulonglong -->  uint64
+float -->  C.float -->  float32
+double -->  C.double -->  float64
+wchar_t -->  C.wchar_t  -->  
+void * -> unsafe.Pointer
+</pre>
+
+<p>项目<a href="https://github.com/giorgisio/cgo" target="_blank" rel="external">giorgisio/cgo</a>提供了一些Go调用C代码各种类型的例子。</p>
+<h3 id="调用动态链接库">调用动态链接库</h3>
+<p>对于Windows环境，Go提供了直接加载动态链接库的方法。 首先syscall包下实现了<code>LoadDLL</code>、<code>FindProc</code>、<code>Release</code>方法，可以加载动态链接库以及得到相应的函数。</p>
+<p>另外包<code>golang.org/x/sys/windows</code>提供了更多的方法，如<code>LoadLibrary</code>、<code>LoadLibraryEx</code>、 <code>DLL</code>、 <code>LazyDLL</code>等方法和类型。</p>
+<p>举个栗子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">h, err := windows.LoadLibrary(<span class="string">"kernel32.dll"</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">    abort(<span class="string">"LoadLibrary"</span>, err)</div><div class="line">}</div><div class="line"><span class="keyword">defer</span> windows.FreeLibrary(h)</div><div class="line">proc, err := windows.GetProcAddress(h, <span class="string">"GetVersion"</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">    abort(<span class="string">"GetProcAddress"</span>, err)</div><div class="line">}</div><div class="line">r, _, _ := syscall.Syscall(<span class="typename">uintptr</span>(proc),<span class="number"> 0</span>,<span class="number"> 0</span>,<span class="number"> 0</span>,<span class="number"> 0</span>)</div><div class="line">major := <span class="typename">byte</span>(r)</div><div class="line">minor := <span class="typename">uint8</span>(r &gt;&gt;<span class="number"> 8</span>)</div><div class="line">build := <span class="typename">uint16</span>(r &gt;&gt;<span class="number"> 16</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"windows version "</span>, major, <span class="string">"."</span>, minor, <span class="string">" (Build "</span>, build, <span class="string">")\n"</span>)</div></pre></td></tr></table></figure>
+
+<p>其它平台我还没有发现官方的调用.so或者.dylib的方法， 但是我看到有第三方的作者写了相应的库，提供类似C中的dlopen和dlsym方法：<br><a href="https://github.com/rainycape/dl" target="_blank" rel="external">Runtime dynamic library loader</a></p>
+<p>参考</p>
+<ul>
+<li><a href="https://golang.org/cmd/cgo/" target="_blank" rel="external">https://golang.org/cmd/cgo/</a></li>
+<li><a href="https://github.com/golang/go/wiki/cgo" target="_blank" rel="external">https://github.com/golang/go/wiki/cgo</a></li>
+<li><a href="http://akrennmair.github.io/golang-cgo-slides/#1" target="_blank" rel="external">http://akrennmair.github.io/golang-cgo-slides/#1</a></li>
+<li><a href="http://dave.cheney.net/2016/01/18/cgo-is-not-go" target="_blank" rel="external">http://dave.cheney.net/2016/01/18/cgo-is-not-go</a></li>
+<li><a href="http://dominik.honnef.co/posts/2015/06/statically_compiled_go_programs__always__even_with_cgo__using_musl/" target="_blank" rel="external">http://dominik.honnef.co/posts/2015/06/statically_compiled_go_programs__always__even_with_cgo__using_musl/</a></li>
+<li><a href="http://blog.giorgis.io/cgo-examples" target="_blank" rel="external">http://blog.giorgis.io/cgo-examples</a></li>
+<li><a href="http://blog.madewithdrew.com/post/statically-linking-c-to-go/" target="_blank" rel="external">http://blog.madewithdrew.com/post/statically-linking-c-to-go/</a></li>
+<li><a href="https://github.com/hyper-carrot/go_command_tutorial/blob/master/0.13.md" target="_blank" rel="external">https://github.com/hyper-carrot/go_command_tutorial/blob/master/0.13.md</a></li>
+<li><a href="https://www.goinggo.net/2013/08/using-c-dynamic-libraries-in-go-programs.html" target="_blank" rel="external">https://www.goinggo.net/2013/08/using-c-dynamic-libraries-in-go-programs.html</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>本章介绍Go如何调用C代码，以及如何调用动态链接库。</p>
+<p>如果你正准备使用Go开发你的程序，或者你正将一个C构建的项目转换成Go项目，请尽量使用Go构建你的项目，而不是偷巧的导入C代码，尽量保持Go项目的纯粹，原因可以查看<a href="http://www.oschina.net/translate/cgo-is-not-go" target="_blank" rel="external">cgo 和 Go 语言是两码事</a>,文末的参考文档中也有这篇文章的原始英文。</p>
+<p>但是，有些情况下，我们不得不使用C代码构建，那么我们就可以使用cgo技术。</p>
+]]>
+    
+    </summary>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[深入Go语言 - 9]]></title>
@@ -2733,37 +2873,6 @@ Precedence    Operator
     </summary>
     
       <category term="Go" scheme="http://colobu.com/categories/Go/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[巅峰对决 - 框架的性能比较]]></title>
-    <link href="http://colobu.com/2016/04/25/performance-comparison-of-frameworks/"/>
-    <id>http://colobu.com/2016/04/25/performance-comparison-of-frameworks/</id>
-    <published>2016-04-25T07:10:38.000Z</published>
-    <updated>2016-06-21T08:57:05.000Z</updated>
-    <content type="html"><![CDATA[<blockquote>
-<p>天下武功，无坚不摧，无快不破</p>
-</blockquote>
-<p>这句话也可以应用在软件开发上，&quot;无快不破&quot;强调的是软件的性能。我陆陆续续写了多篇各种框架的文章，也在github上开了多个性能比较的开源项目，本文做一个汇总，以备将来的查找。<br><a id="more"></a></p>
-<ol>
-<li><a href="http://colobu.com/2016/02/26/techempower-benchmarks-round12/" target="_blank" rel="external">最快的web服务器</a></li>
-<li><a href="http://colobu.com/2016/02/23/1M-threads-microbenchmark/" target="_blank" rel="external">最快的并发框架</a></li>
-<li><a href="http://colobu.com/2015/07/16/rpc-framework-performance-comparison/" target="_blank" rel="external">最快的RPC服务器</a></li>
-<li><a href="http://colobu.com/2015/07/14/performance-comparison-of-7-websocket-frameworks/" target="_blank" rel="external">最快的websocket框架</a></li>
-<li><a href="http://colobu.com/2015/11/17/Jax-RS-Performance-Comparison/" target="_blank" rel="external">最快的RESTful框架</a></li>
-<li><a href="http://colobu.com/2016/03/16/why-is-go-gencode-so-fast/" target="_blank" rel="external">最快的Go序列化框架</a></li>
-<li><a href="http://colobu.com/2016/04/06/the-fastest-golang-web-framework/" target="_blank" rel="external">最快的Go web框架</a></li>
-<li><a href="http://colobu.com/2014/08/26/java-serializer-comparison/" target="_blank" rel="external">最快的Java序列化框架</a></li>
-</ol>
-]]></content>
-    <summary type="html">
-    <![CDATA[<blockquote>
-<p>天下武功，无坚不摧，无快不破</p>
-</blockquote>
-<p>这句话也可以应用在软件开发上，&quot;无快不破&quot;强调的是软件的性能。我陆陆续续写了多篇各种框架的文章，也在github上开了多个性能比较的开源项目，本文做一个汇总，以备将来的查找。<br>]]>
-    
-    </summary>
     
   </entry>
   
