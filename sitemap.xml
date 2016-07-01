@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</loc>
+    <lastmod>2016-07-01T10:29:35.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/06/30/dive-into-go-10/</loc>
     <lastmod>2016-06-30T10:31:21.000Z</lastmod>
   </url>
@@ -27,7 +32,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/02/go-socket-programming-UDP/</loc>
+    <loc>http://colobu.com/2016/04/06/golang-auto-build-versioning/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,11 +527,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/04/13/consistent-hash-algorithm-in-java-memcached-client/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -617,17 +617,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/documents/index.html</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -662,12 +662,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
+    <loc>http://colobu.com/2014/12/02/go-socket-programming-UDP/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/04/06/golang-auto-build-versioning/</loc>
+    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -798,6 +798,11 @@
   
   <url>
     <loc>http://colobu.com/2014/09/12/java-nio-epoll/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
