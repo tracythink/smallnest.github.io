@@ -154,7 +154,7 @@ HTTP是一个复杂的、多阶段(multi-stage)协议，所以没有一个放之
 <p>首先，你需要了解Go实现超时的网络原语(primitive): <strong>Deadline</strong> (最后期限)。</p>
 <p><code>net.Conn</code>为Deadline提供了多个方法<code>Set[Read|Write]Deadline(time.Time)</code>。Deadline是一个绝对时间值，当到达这个时间的时候，所有的 I/O 操作都会失败，返回超时(timeout)错误。</p>
 <p><strong>Deadline不是超时</strong>(timeout)。一旦设置它们永久生效(或者直到下一次调用SetDeadline), 不管此时连接是否被使用和怎么用。所以如果想使用<code>SetDeadline</code>建立超时机制，你不得不每次在<code>Read/Write</code>操作之前调用它。</p>
-<p>你可能不想自己调用<code>SetDeadline</code>, 而是让<code>net/http</code>代替你调用，所以你可以调用更高级的timeout方法。但是请记住，所有的超时的实现都是基于Deadline, 所以它们不必重置每次发送和接收的时间值(<strong>they do NOT reset every time data is sent or received</strong>)。</p>
+<p>你可能不想自己调用<code>SetDeadline</code>, 而是让<code>net/http</code>代替你调用，所以你可以调用更高级的timeout方法。但是请记住，所有的超时的实现都是基于Deadline,  so they <strong>do NOT reset every time data is sent or received</strong> (?)。</p>
 <h3 id="服务器端超时设置">服务器端超时设置</h3>
 <p><img src="server-timeout.png" alt=""></p>
 <p>对于暴露在网上的服务器来说，为客户端连接设置超时至关重要，否则巨慢的或者隐失的客户端可能导致文件句柄无法释放，最终导致服务器出现下面的错误:</p>

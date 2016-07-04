@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</loc>
+    <lastmod>2016-07-04T07:46:35.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/04/dive-into-go-11/</loc>
     <lastmod>2016-07-04T07:30:58.000Z</lastmod>
   </url>
@@ -9,11 +14,6 @@
   <url>
     <loc>http://colobu.com/2016/07/02/bloom-filter-for-scala/</loc>
     <lastmod>2016-07-04T02:03:17.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</loc>
-    <lastmod>2016-07-04T02:02:06.000Z</lastmod>
   </url>
   
   <url>

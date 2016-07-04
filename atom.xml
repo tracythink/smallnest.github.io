@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-04T07:31:21.684Z</updated>
+  <updated>2016-07-04T07:46:44.735Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -439,7 +439,7 @@ I just allocated the object 36db757cdd5ae408ef61dca2406d0d35 of type com/google/
     <link href="http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/"/>
     <id>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</id>
     <published>2016-07-01T06:56:19.000Z</published>
-    <updated>2016-07-04T02:02:06.000Z</updated>
+    <updated>2016-07-04T07:46:35.000Z</updated>
     <content type="html"><![CDATA[<p>英文原始出处: <a href="https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/" target="_blank" rel="external">The complete guide to Go net/http timeouts</a>, 作者: <a href="https://blog.cloudflare.com/author/filippo/" target="_blank" rel="external">Filippo Valsorda</a></p>
 <p>当用Go写HTTP的服务器和客户端的时候，超时处理总是最易犯错和最微妙的地方之一。错误可能来自很多地方，一个错误可能等待很长时间没有结果，直到网络故障或者进程挂起。</p>
 <p>HTTP是一个复杂的、多阶段(multi-stage)协议，所以没有一个放之四海而皆准的超时解决方案，比如一个流服务、一个JSON API和一个Comet服务对超时的需求都不相同， 往往默认值不是你想要的。</p>
@@ -449,7 +449,7 @@ I just allocated the object 36db757cdd5ae408ef61dca2406d0d35 of type com/google/
 <p>首先，你需要了解Go实现超时的网络原语(primitive): <strong>Deadline</strong> (最后期限)。</p>
 <p><code>net.Conn</code>为Deadline提供了多个方法<code>Set[Read|Write]Deadline(time.Time)</code>。Deadline是一个绝对时间值，当到达这个时间的时候，所有的 I/O 操作都会失败，返回超时(timeout)错误。</p>
 <p><strong>Deadline不是超时</strong>(timeout)。一旦设置它们永久生效(或者直到下一次调用SetDeadline), 不管此时连接是否被使用和怎么用。所以如果想使用<code>SetDeadline</code>建立超时机制，你不得不每次在<code>Read/Write</code>操作之前调用它。</p>
-<p>你可能不想自己调用<code>SetDeadline</code>, 而是让<code>net/http</code>代替你调用，所以你可以调用更高级的timeout方法。但是请记住，所有的超时的实现都是基于Deadline, 所以它们不必重置每次发送和接收的时间值(<strong>they do NOT reset every time data is sent or received</strong>)。</p>
+<p>你可能不想自己调用<code>SetDeadline</code>, 而是让<code>net/http</code>代替你调用，所以你可以调用更高级的timeout方法。但是请记住，所有的超时的实现都是基于Deadline,  so they <strong>do NOT reset every time data is sent or received</strong> (?)。</p>
 <h3 id="服务器端超时设置">服务器端超时设置</h3>
 <p><img src="server-timeout.png" alt=""></p>
 <p>对于暴露在网上的服务器来说，为客户端连接设置超时至关重要，否则巨慢的或者隐失的客户端可能导致文件句柄无法释放，最终导致服务器出现下面的错误:</p>
