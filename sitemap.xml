@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2015/10/09/Linux-Signals/</loc>
+    <lastmod>2016-07-05T10:02:49.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/06/21/dive-into-go-6/</loc>
     <lastmod>2016-07-05T02:13:50.000Z</lastmod>
   </url>
@@ -43,11 +48,6 @@
   
   <url>
     <loc>http://colobu.com/2015/09/21/goreq-A-simplified-golang-http-client/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -258,6 +258,11 @@
   
   <url>
     <loc>http://colobu.com/2014/12/10/spark-monitoring/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,11 +527,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/04/13/consistent-hash-algorithm-in-java-memcached-client/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -617,17 +617,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/documents/index.html</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -672,7 +672,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -813,6 +813,11 @@
   
   <url>
     <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -1078,11 +1083,6 @@
   
   <url>
     <loc>http://colobu.com/2015/01/26/complete-java-servlets-tutorial/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/10/09/Linux-Signals/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
