@@ -2,13 +2,63 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://colobu.com/2015/10/09/Linux-Signals/</loc>
-    <lastmod>2016-07-05T10:02:49.000Z</lastmod>
+    <loc>http://colobu.com/2016/07/04/dive-into-go-11/</loc>
+    <lastmod>2016-07-06T05:33:52.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/30/dive-into-go-10/</loc>
+    <lastmod>2016-07-06T05:33:31.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/29/dive-into-go-9/</loc>
+    <lastmod>2016-07-06T05:33:13.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/27/dive-into-go-8/</loc>
+    <lastmod>2016-07-06T05:32:07.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/22/dive-into-go-7/</loc>
+    <lastmod>2016-07-06T05:31:56.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2016/06/21/dive-into-go-6/</loc>
-    <lastmod>2016-07-05T02:13:50.000Z</lastmod>
+    <lastmod>2016-07-06T05:31:43.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/20/dive-into-go-5/</loc>
+    <lastmod>2016-07-06T05:31:14.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/20/dive-into-go-4/</loc>
+    <lastmod>2016-07-06T05:30:50.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
+    <lastmod>2016-07-06T05:30:29.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/16/dive-into-go-2/</loc>
+    <lastmod>2016-07-06T05:30:00.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/15/dive-into-go-1/</loc>
+    <lastmod>2016-07-06T05:27:57.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/10/09/Linux-Signals/</loc>
+    <lastmod>2016-07-06T05:25:52.000Z</lastmod>
   </url>
   
   <url>
@@ -17,62 +67,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/07/04/dive-into-go-11/</loc>
-    <lastmod>2016-07-04T07:30:58.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/07/02/bloom-filter-for-scala/</loc>
     <lastmod>2016-07-04T02:03:17.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/06/30/dive-into-go-10/</loc>
-    <lastmod>2016-06-30T10:31:21.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/29/dive-into-go-9/</loc>
-    <lastmod>2016-06-30T02:36:27.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/27/dive-into-go-8/</loc>
-    <lastmod>2016-06-29T09:32:42.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/22/dive-into-go-7/</loc>
-    <lastmod>2016-06-28T05:27:37.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/09/21/goreq-A-simplified-golang-http-client/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-8/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-7/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-6/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-4/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -592,31 +592,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/06/15/dive-into-go-1/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/16/dive-into-go-2/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/20/dive-into-go-4/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/20/dive-into-go-5/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -628,6 +603,31 @@
   
   <url>
     <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-8/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-7/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-6/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-4/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
