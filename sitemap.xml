@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/07/monitor-troubleshoot-linux-server-sysdig/</loc>
+    <lastmod>2016-07-07T06:33:46.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/06/dive-into-go-12/</loc>
     <lastmod>2016-07-07T05:34:31.000Z</lastmod>
   </url>
@@ -77,7 +82,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/10/ember-naming-conventions/</loc>
+    <loc>http://colobu.com/2016/04/06/golang-auto-build-versioning/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -167,7 +172,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/documents/index.html</loc>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -257,12 +262,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/17/snowball-arch/</loc>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
+    <loc>http://colobu.com/2015/08/17/snowball-arch/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -497,12 +502,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
+    <loc>http://colobu.com/documents/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
+    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,17 +527,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/04/12/context-switching-monitor/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
+    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -672,12 +672,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
+    <loc>http://colobu.com/2014/09/10/ember-naming-conventions/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/04/06/golang-auto-build-versioning/</loc>
+    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -823,6 +823,11 @@
   
   <url>
     <loc>http://colobu.com/2014/09/05/java-lambdas-hacking/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
