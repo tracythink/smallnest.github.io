@@ -2,8 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
+    <lastmod>2016-07-07T08:19:33.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/01/07/Protobuf-language-guide/</loc>
+    <lastmod>2016-07-07T07:36:28.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/07/monitor-troubleshoot-linux-server-sysdig/</loc>
-    <lastmod>2016-07-07T07:09:24.000Z</lastmod>
+    <lastmod>2016-07-07T07:11:27.000Z</lastmod>
   </url>
   
   <url>
@@ -52,11 +62,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
-    <lastmod>2016-07-06T05:30:29.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/06/16/dive-into-go-2/</loc>
     <lastmod>2016-07-06T05:30:00.000Z</lastmod>
   </url>
@@ -83,11 +88,6 @@
   
   <url>
     <loc>http://colobu.com/2016/04/06/golang-auto-build-versioning/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/01/22/which-kafka-partition-will-keyedMessages-be-sent-to-if-key-is-null/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -297,6 +297,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/documents/index.html</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/10/28/secrets-of-java-8-functional-interface/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -497,12 +502,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/13/kafka-example-in-scala/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/documents/index.html</loc>
+    <loc>http://colobu.com/2015/03/13/kafka-example-in-scala/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,17 +527,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/04/12/context-switching-monitor/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -592,17 +592,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2014/09/05/design-pattern-cheatsheet/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -657,6 +652,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/01/22/which-kafka-partition-will-keyedMessages-be-sent-to-if-key-is-null/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/07/21/dubbo-performance-test/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -677,7 +677,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
+    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -828,6 +828,11 @@
   
   <url>
     <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -1058,11 +1063,6 @@
   
   <url>
     <loc>http://colobu.com/2016/05/26/RPCX-a-distributed-rpc-dubbo-like-framework-by-Go/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/01/07/Protobuf-language-guide/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   

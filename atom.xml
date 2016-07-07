@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-07T07:10:37.754Z</updated>
+  <updated>2016-07-07T08:20:09.035Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <link href="http://colobu.com/2016/07/07/monitor-troubleshoot-linux-server-sysdig/"/>
     <id>http://colobu.com/2016/07/07/monitor-troubleshoot-linux-server-sysdig/</id>
     <published>2016-07-07T10:01:32.000Z</published>
-    <updated>2016-07-07T07:09:24.000Z</updated>
-    <content type="html"><![CDATA[<p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：</a> Gabriel Cánepa</p>
+    <updated>2016-07-07T07:11:27.000Z</updated>
+    <content type="html"><![CDATA[<p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html</a>  作者： Gabriel Cánepa</p>
 <p>当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。你会使用什么样的命令行工具来监控原始网络通信呢？如果你想到了tcpdump，你又作出了一个极佳的选择。而如果你碰到必须追踪打开的文件（在Unix意义上：一切皆文件）的需求，可能你会使用lsof。</p>
 <p>strace、tcpdump以及lsof，确实是些伟大的工具，它们应该成为每个系统管理员工具集之中的一部分，而这也正是你为什么应该爱上sysdig的原因。它是一个强大的开源工具，用于系统级别的勘察和排障，它的创建者在介绍它时称之为“strace+tcpdump+lsof+上面点缀着lua樱桃的绝妙酱汁”。抛开幽默不说，sysdig的最棒特性之一在于，它不仅能分析Linux系统的“现场”状态，也能将该状态保存为转储文件以供离线检查。更重要的是，你可以自定义sysdig的行为，或者甚至通过内建的（你也可以自己编写）名为凿子（chisel）的小脚本增强其功能。单独的凿子可以以脚本指定的各种风格分析sysdig捕获的事件流。</p>
 <p>在本教程中，我们将探索sysdig的安装及其基本用法，在Linux上实施系统监控和排障。<br><a id="more"></a></p>
@@ -121,7 +121,7 @@
 </ul>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：</a> Gabriel Cánepa</p>
+    <![CDATA[<p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html</a>  作者： Gabriel Cánepa</p>
 <p>当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。你会使用什么样的命令行工具来监控原始网络通信呢？如果你想到了tcpdump，你又作出了一个极佳的选择。而如果你碰到必须追踪打开的文件（在Unix意义上：一切皆文件）的需求，可能你会使用lsof。</p>
 <p>strace、tcpdump以及lsof，确实是些伟大的工具，它们应该成为每个系统管理员工具集之中的一部分，而这也正是你为什么应该爱上sysdig的原因。它是一个强大的开源工具，用于系统级别的勘察和排障，它的创建者在介绍它时称之为“strace+tcpdump+lsof+上面点缀着lua樱桃的绝妙酱汁”。抛开幽默不说，sysdig的最棒特性之一在于，它不仅能分析Linux系统的“现场”状态，也能将该状态保存为转储文件以供离线检查。更重要的是，你可以自定义sysdig的行为，或者甚至通过内建的（你也可以自己编写）名为凿子（chisel）的小脚本增强其功能。单独的凿子可以以脚本指定的各种风格分析sysdig捕获的事件流。</p>
 <p>在本教程中，我们将探索sysdig的安装及其基本用法，在Linux上实施系统监控和排障。<br>]]>
@@ -2072,7 +2072,7 @@ Precedence    Operator
     <link href="http://colobu.com/2016/06/16/dive-into-go-3/"/>
     <id>http://colobu.com/2016/06/16/dive-into-go-3/</id>
     <published>2016-06-16T05:24:22.000Z</published>
-    <updated>2016-07-06T05:30:29.000Z</updated>
+    <updated>2016-07-07T08:19:33.000Z</updated>
     <content type="html"><![CDATA[<p>本文介绍Go的类型系统,以及类型的比较和语句块。</p>
 <p>Go语言包含11种类型，你应该很熟悉了，下面让我们再深入的了解一下每种类型的细节。</p>
 <ul>
@@ -2290,10 +2290,17 @@ Precedence    Operator
 <p>4、 copy的时候有重叠<br>调用<code>copy</code>方法的时候也可能会产生副作用，比如下面的例子，copy到s1的操作导致底层的数组改变了，影响了a,s1,s2的值</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">a := [...]<span class="typename">int</span><span class="number">{1</span>,<span class="number"> 2</span>,<span class="number"> 3</span>,<span class="number"> 4</span>,<span class="number"> 5</span>}</div><div class="line">s1 := a<span class="number">[0</span><span class="number">:3</span>]</div><div class="line">s2 := a<span class="number">[1</span><span class="number">:5</span>]</div><div class="line"><span class="built_in">copy</span>(s1, s2)</div><div class="line"></div><div class="line">fmt.Printf(<span class="string">"a: %#v\ns1:%#v\ns2:%#v\n"</span>, a, s1, s2)</div></pre></td></tr></table></figure>
 
+<p>5、Slice作为参数传递<br>Go语言实际上都是按值传递的(指针类型传递的是指针的值)。因此下面的例子中s1并没有被修改，你只能按照<code>returningToo</code>函数的方式得到修改的slice。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> mystruct <span class="keyword">struct</span> {</div><div class="line">	val <span class="typename">int</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	<span class="keyword">var</span> s1 []mystruct</div><div class="line">	<span class="keyword">var</span> s2 []mystruct</div><div class="line"></div><div class="line">	onlyPassing(s1)</div><div class="line">	s2 = returningToo(s2)</div><div class="line"></div><div class="line">	fmt.Printf(<span class="string">"%#v\n%#v"</span>, s1, s2)</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> onlyPassing(s []mystruct) {</div><div class="line">	s = <span class="built_in">append</span>(s, mystruct<span class="number">{1</span>})</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> returningToo(s []mystruct) []mystruct {</div><div class="line">	s = <span class="built_in">append</span>(s, mystruct<span class="number">{1</span>})</div><div class="line">	<span class="keyword">return</span> s</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>或者传递slice的指针：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> onlyPassing(s *[]mystruct) {</div><div class="line">    *s = <span class="built_in">append</span>(*s, mystruct<span class="number">{1</span>})</div><div class="line">}</div></pre></td></tr></table></figure>
+
 <p>参考</p>
 <ul>
 <li><a href="https://blog.golang.org/slices" target="_blank" rel="external">https://blog.golang.org/slices</a></li>
 <li><a href="https://golang.org/pkg/unsafe/" target="_blank" rel="external">https://golang.org/pkg/unsafe/</a></li>
+<li><a href="https://www.reddit.com/r/golang/comments/283vpk/help_with_slices_and_passbyreference/" target="_blank" rel="external">https://www.reddit.com/r/golang/comments/283vpk/help_with_slices_and_passbyreference/</a></li>
 </ul>
 <h3 id="字符串类型">字符串类型</h3>
 <p>字符串类型(string)是一个常用的类型，它的值是一组基本按照UTF-8编码的字节序列，可以为空。<br>在前一篇文章中我已经介绍了字符串类型，所以此处不再重复介绍了，我会介绍一些有趣的性能。</p>

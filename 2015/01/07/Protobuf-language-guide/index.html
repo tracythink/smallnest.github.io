@@ -3,20 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Protobuf 语法指南 | 鸟窝</title>
+  <title>[译]Protobuf 语法指南 | 鸟窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。
-本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/intl/zh-CN/apis/protocolbuffers/docs/tutorials.html">
+  <meta name="description" content="英文: Proto Buffers Language Guide
+本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。(本文只针对proto2的语法)
+本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/in">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Protobuf 语法指南">
+<meta property="og:title" content="[译]Protobuf 语法指南">
 <meta property="og:url" content="http://colobu.com/2015/01/07/Protobuf-language-guide/">
 <meta property="og:site_name" content="鸟窝">
-<meta property="og:description" content="本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。
-本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/intl/zh-CN/apis/protocolbuffers/docs/tutorials.html">
+<meta property="og:description" content="英文: Proto Buffers Language Guide
+本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。(本文只针对proto2的语法)
+本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/in">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Protobuf 语法指南">
-<meta name="twitter:description" content="本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。
-本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/intl/zh-CN/apis/protocolbuffers/docs/tutorials.html">
+<meta name="twitter:title" content="[译]Protobuf 语法指南">
+<meta name="twitter:description" content="英文: Proto Buffers Language Guide
+本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。(本文只针对proto2的语法)
+本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在http://code.google.com/in">
 
   
     <link rel="alternative" href="/atom.xml" title="鸟窝" type="application/atom+xml">
@@ -118,7 +121,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Protobuf 语法指南
+      [译]Protobuf 语法指南
 	  
     </h1>
   
@@ -136,7 +139,8 @@
 	  
 	  
       
-        <p>本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。</p>
+        <p>英文: <a href="https://developers.google.com/protocol-buffers/docs/proto" target="_blank" rel="external">Proto Buffers Language Guide</a></p>
+<p>本指南描述了怎样使用protocol buffer 语法来构造你的protocol buffer数据，包括.proto文件语法以及怎样生成.proto文件的数据访问类。<br>(本文只针对proto2的语法)</p>
 <p>本文是一个参考指南——如果要查看如何使用本文中描述的多个特性的循序渐进的例子，请在<a href="http://code.google.com/intl/zh-CN/apis/protocolbuffers/docs/tutorials.html" target="_blank" rel="external">http://code.google.com/intl/zh-CN/apis/protocolbuffers/docs/tutorials.html</a>中查找需要的语言的教程。</p>
 <a id="more"></a>
 <h2 id="定义一个消息类型">定义一个消息类型</h2>
@@ -206,8 +210,6 @@
 <p>在上面的例子中，Result消息类型与SearchResponse是定义在同一文件中的。如果想要使用的消息类型已经在其他.proto文件中已经定义过了呢？<br>你可以通过导入（importing）其他.proto文件中的定义来使用它们。要导入其他.proto文件的定义，你需要在你的文件中添加一个导入声明，如：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="string">"myproject/other_protos.proto"</span>;</div></pre></td></tr></table></figure>
 
-
-
 <p>默认情况下你只能使用直接导入的.proto文件中的定义. 然而， 有时候你需要移动一个.proto文件到一个新的位置， 可以不直接移动.proto文件， 只需放入一个dummy .proto 文件在老的位置， 然后使用import转向新的位置:</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// new.proto</span></div><div class="line"><span class="comment">// All definitions are moved here</span></div></pre></td></tr></table></figure>
 
@@ -267,9 +269,9 @@
 <p>在此例中，访问此扩展的C++代码如下：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Foo foo<span class="comment">;</span></div><div class="line">foo.SetExtension(<span class="literal">Baz::bar</span>, <span class="number">15</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
 
-<p>In other words, the only effect is that bar is defined within the scope of Baz. </p>
+<p>In other words, the only effect is that bar is defined within the scope of Baz.</p>
 <blockquote>
-<p>This is a common source of confusion: Declaring an extend block nested inside a message type does not imply any relationship between the outer type and the extended type. In particular, the above example does not mean that Baz is any sort of subclass of Foo. All it means is that the symbol bar is declared inside the scope of Baz; it&#39;s simply a static member. </p>
+<p>This is a common source of confusion: Declaring an extend block nested inside a message type does not imply any relationship between the outer type and the extended type. In particular, the above example does not mean that Baz is any sort of subclass of Foo. All it means is that the symbol bar is declared inside the scope of Baz; it&#39;s simply a static member.</p>
 </blockquote>
 <p>一个通常的设计模式就是：在扩展的字段类型的范围内定义该扩展——例如，下面是一个Foo的扩展（该扩展是Baz类型的），其中，扩展被定义为了Baz的一部分：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">message Baz {</div><div class="line">  extend Foo {</div><div class="line">    optional Baz foo_ext = <span class="number">127</span>;</div><div class="line">  }</div><div class="line">  <span class="keyword">...</span></div><div class="line">}</div></pre></td></tr></table></figure>
@@ -283,20 +285,20 @@
 <p>如果标识号需要很大的数量时，可以将该可扩展标符号的范围扩大至max，其中max是229 - 1, 或536,870,911。如下所示：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> <span class="class"><span class="keyword">message</span> <span class="title">Foo</span> </span>{</div><div class="line"></div><div class="line">  extensions <span class="number">1000</span> to max;</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>max 是 2^29 - 1, 或者 536,870,911. </p>
+<p>max 是 2^29 - 1, 或者 536,870,911.</p>
 <p>通常情况下在选择标符号时，标识号产生的规则中应该避开[19000－19999]之间的数字，因为这些已经被Protocol Buffers实现中预留了。</p>
 <h2 id="Oneof">Oneof</h2>
 <p>如果你的消息中有很多可选字段， 并且同时至多一个字段会被设置， 你可以加强这个行为，使用<code>oneof</code>特性节省内存.</p>
-<p>Oneof字段就像可选字段， 除了它们会共享内存， 至多一个字段会被设置。 设置其中一个字段会清除其它oneof字段。 你可以使用case()或者WhichOneof() 方法检查哪个oneof字段被设置， 看你使用什么语言了. </p>
+<p>Oneof字段就像可选字段， 除了它们会共享内存， 至多一个字段会被设置。 设置其中一个字段会清除其它oneof字段。 你可以使用case()或者WhichOneof() 方法检查哪个oneof字段被设置， 看你使用什么语言了.</p>
 <h3 id="使用Oneof">使用Oneof</h3>
-<p>为了在.proto定义Oneof字段， 你需要在名字前面加上oneof关键字, 比如下面例子的test_oneof: </p>
+<p>为了在.proto定义Oneof字段， 你需要在名字前面加上oneof关键字, 比如下面例子的test_oneof:</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">message</span> <span class="title">SampleMessage</span> </span>{</div><div class="line">  oneof test_oneof {</div><div class="line">     <span class="built_in">string</span> name = <span class="number">4</span>;</div><div class="line"><span class="constant">     SubMessage sub_message</span> = <span class="number">9</span>;</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>然后你可以增加oneof字段到 oneof 定义中. 你可以增加任意类型的字段, 但是不能使用 required, optional,  repeated 关键字.</p>
-<p>在产生的代码中, oneof字段拥有同样的 getters 和setters， 就像正常的可选字段一样. 也有一个特殊的方法来检查到底那个字段被设置. 你可以在相应的语言API中找到oneof API介绍. </p>
+<p>在产生的代码中, oneof字段拥有同样的 getters 和setters， 就像正常的可选字段一样. 也有一个特殊的方法来检查到底那个字段被设置. 你可以在相应的语言API中找到oneof API介绍.</p>
 <p>Oneof 特性:</p>
 <ul>
-<li>设置oneof会自动清楚其它oneof字段的值. 所以设置多次后，只有最后一次设置的字段有值. </li>
+<li>设置oneof会自动清楚其它oneof字段的值. 所以设置多次后，只有最后一次设置的字段有值.</li>
 </ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">SampleMessage <span class="keyword">message</span>;</div><div class="line"><span class="keyword">message</span>.set_name(“name”);</div><div class="line">CHECK(<span class="keyword">message</span>.has_name());</div><div class="line"><span class="keyword">message</span>.mutable_sub_message();   <span class="comment">// Will clear name field.</span></div><div class="line">CHECK(!<span class="keyword">message</span>.has_name());</div></pre></td></tr></table></figure>
 
@@ -305,12 +307,12 @@
 <li>oneof不支持扩展.</li>
 <li>oneof不能 repeated.</li>
 <li>反射API对oneof 字段有效.</li>
-<li>如果使用C++,需确保代码不会导致内存泄漏. 下面的代码会崩溃， 因为sub_message 已经通过set_name()删除了. </li>
+<li>如果使用C++,需确保代码不会导致内存泄漏. 下面的代码会崩溃， 因为sub_message 已经通过set_name()删除了.</li>
 </ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">SampleMessage <span class="keyword">message</span>;</div><div class="line">SubMessage* sub_message = <span class="keyword">message</span>.mutable_sub_message();</div><div class="line"><span class="keyword">message</span>.set_name(“name”);      <span class="comment">// Will delete sub_message</span></div><div class="line">sub_message.set_…              <span class="comment">// Crashes here</span></div></pre></td></tr></table></figure>
 
 <ul>
-<li>Again in C++, if you Swap() two messages with oneofs, each message will end up with the other’s oneof case: in the example below, msg1 will have a sub_message and msg2 will have a name. </li>
+<li>Again in C++, if you Swap() two messages with oneofs, each message will end up with the other’s oneof case: in the example below, msg1 will have a sub_message and msg2 will have a name.</li>
 </ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SampleMessage msg1;</div><div class="line">msg1.set_name(“name”);</div><div class="line">SampleMessage msg2;</div><div class="line">msg2.mutable_sub_message();</div><div class="line">msg1.swap(&msg2);</div><div class="line"><span class="operator"><span class="keyword">CHECK</span>(msg1.has_sub_message());</span></div><div class="line"><span class="operator"><span class="keyword">CHECK</span>(msg2.has_name());</span></div></pre></td></tr></table></figure>
 
@@ -320,7 +322,7 @@
 <ul>
 <li><strong>Move optional fields into or out of a oneof</strong>: You may lose some of your information (some fields will be cleared) after the message is serialized and parsed.</li>
 <li><strong>Delete a oneof field and add it back</strong>: This may clear your currently set oneof field after the message is serialized and parsed.</li>
-<li><strong>Split or merge oneof</strong>: This has similar issues to moving regular optional fields. </li>
+<li><strong>Split or merge oneof</strong>: This has similar issues to moving regular optional fields.</li>
 </ul>
 <h2 id="包（Package）">包（Package）</h2>
 <p>当然可以为.proto文件新增一个可选的package声明符，用来防止不同的消息类型有命名冲突。如：</p>
@@ -347,7 +349,7 @@
 <p>所有service类都必须实现Service接口，它提供了一种用来调用具体方法的方式，即在编译期不需要知道方法名及它的输入、输出类型。在服务器端，通过服务注册它可以被用来实现一个RPC Server。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> google::protobuf;</div><div class="line"></div><div class="line"><span class="keyword">class</span> ExampleSearchService : <span class="keyword">public</span> SearchService {</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">  <span class="keyword">void</span> Search(protobuf::RpcController* controller,</div><div class="line">              <span class="keyword">const</span> SearchRequest* request,</div><div class="line">              SearchResponse* response,</div><div class="line">              protobuf::Closure* done) {</div><div class="line">    <span class="keyword">if</span> (request-&gt;query() == <span class="string">"google"</span>) {</div><div class="line">      response-&gt;add_result()-&gt;set_url(<span class="string">"http://www.google.com"</span>);</div><div class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (request-&gt;query() == <span class="string">"protocol buffers"</span>) {</div><div class="line">      response-&gt;add_result()-&gt;set_url(<span class="string">"http://protobuf.googlecode.com"</span>);</div><div class="line">    }</div><div class="line">    done-&gt;Run();</div><div class="line">  }</div><div class="line">};</div><div class="line"></div><div class="line"><span class="keyword">int</span> main() {</div><div class="line">  <span class="comment">// You provide class MyRpcServer.  It does not have to implement any</span></div><div class="line">  <span class="comment">// particular interface; this is just an example.</span></div><div class="line">  MyRpcServer server;</div><div class="line"></div><div class="line">  protobuf::Service* service = <span class="keyword">new</span> ExampleSearchService;</div><div class="line">  server.ExportOnPort(<span class="number">1234</span>, service);</div><div class="line">  server.Run();</div><div class="line"></div><div class="line">  <span class="keyword">delete</span> service;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>There are a number of ongoing third-party projects to develop RPC implementations for Protocol Buffers. For a list of links to projects we know about, see the third-party add-ons wiki page. </p>
+<p>There are a number of ongoing third-party projects to develop RPC implementations for Protocol Buffers. For a list of links to projects we know about, see the third-party add-ons wiki page.</p>
 <h2 id="选项（Options）">选项（Options）</h2>
 <p>在定义.proto文件时能够标注一系列的options。Options并不改变整个文件声明的含义，但却能够影响特定环境下处理方式。完整的可用选项可以在google/protobuf/descriptor.proto找到。</p>
 <p>一些选项是文件级别的，意味着它可以作用于最外范围，不包含在任何消息内部、enum或服务定义中。一些选项是消息级别的，意味着它可以用在消息定 义的内部。当然有些选项可以作用在域、enum类型、enum值、服务类型及服务方法中。到目前为止，并没有一种有效的选项能作用于所有的类型。</p>
@@ -401,7 +403,6 @@
 
 <p>在Java代码中的读取方式如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String value = MyProtoFile.MyMessage.getDescriptor().getOptions()</div><div class="line">  .getExtension(MyProtoFile.myOption);</div></pre></td></tr></table></figure>
-
 
 <p>在Python中:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">value = my_proto_file_pb2.MyMessage.DESCRIPTOR.GetOptions()</div><div class="line">  .Extensions[my_proto_file_pb2.my_option]</div></pre></td></tr></table></figure>
@@ -482,7 +483,7 @@
 
 
 <section id="comments">
-  <div class="ds-thread" data-thread-key="2015/01/07/Protobuf-language-guide/" data-title="Protobuf 语法指南" data-url="http://colobu.com/2015/01/07/Protobuf-language-guide/"></div>
+  <div class="ds-thread" data-thread-key="2015/01/07/Protobuf-language-guide/" data-title="[译]Protobuf 语法指南" data-url="http://colobu.com/2015/01/07/Protobuf-language-guide/"></div>
   
 </section>
 </section>

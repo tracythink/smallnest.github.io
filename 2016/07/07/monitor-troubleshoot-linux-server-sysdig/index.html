@@ -5,14 +5,14 @@
   
   <title>[转]系统之锹sysdig：Linux服务器监控和排障利器 | 鸟窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者： Gabriel Cánepa
-当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。">
+  <meta name="description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html  作者： Gabriel Cánepa
+当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[转]系统之锹sysdig：Linux服务器监控和排障利器">
 <meta property="og:url" content="http://colobu.com/2016/07/07/monitor-troubleshoot-linux-server-sysdig/">
 <meta property="og:site_name" content="鸟窝">
-<meta property="og:description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者： Gabriel Cánepa
-当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。">
+<meta property="og:description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html  作者： Gabriel Cánepa
+当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对">
 <meta property="og:image" content="1.jpg">
 <meta property="og:image" content="2.jpg">
 <meta property="og:image" content="3.jpg">
@@ -22,8 +22,8 @@
 <meta property="og:image" content="7.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[转]系统之锹sysdig：Linux服务器监控和排障利器">
-<meta name="twitter:description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者： Gabriel Cánepa
-当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。">
+<meta name="twitter:description" content="中文编译地址：https://linux.cn/article-4341-1.html by GOLinux英文原文地址：http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html  作者： Gabriel Cánepa
+当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对">
 
   
     <link rel="alternative" href="/atom.xml" title="鸟窝" type="application/atom+xml">
@@ -147,7 +147,7 @@
 	  
 	  
       
-        <p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html作者：</a> Gabriel Cánepa</p>
+        <p>中文编译地址：<a href="https://linux.cn/article-4341-1.html" target="_blank" rel="external">https://linux.cn/article-4341-1.html</a> by GOLinux<br>英文原文地址：<a href="http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html" target="_blank" rel="external">http://xmodulo.com/monitor-troubleshoot-linux-server-sysdig.html</a>  作者： Gabriel Cánepa</p>
 <p>当你需要追踪某个进程产生和接收的系统调用时，首先浮现在你脑海中的是什么？你可能会想到strace，那么你是对的。你会使用什么样的命令行工具来监控原始网络通信呢？如果你想到了tcpdump，你又作出了一个极佳的选择。而如果你碰到必须追踪打开的文件（在Unix意义上：一切皆文件）的需求，可能你会使用lsof。</p>
 <p>strace、tcpdump以及lsof，确实是些伟大的工具，它们应该成为每个系统管理员工具集之中的一部分，而这也正是你为什么应该爱上sysdig的原因。它是一个强大的开源工具，用于系统级别的勘察和排障，它的创建者在介绍它时称之为“strace+tcpdump+lsof+上面点缀着lua樱桃的绝妙酱汁”。抛开幽默不说，sysdig的最棒特性之一在于，它不仅能分析Linux系统的“现场”状态，也能将该状态保存为转储文件以供离线检查。更重要的是，你可以自定义sysdig的行为，或者甚至通过内建的（你也可以自己编写）名为凿子（chisel）的小脚本增强其功能。单独的凿子可以以脚本指定的各种风格分析sysdig捕获的事件流。</p>
 <p>在本教程中，我们将探索sysdig的安装及其基本用法，在Linux上实施系统监控和排障。<br><a id="more"></a></p>
