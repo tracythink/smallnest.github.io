@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/06/dive-into-go-12/</loc>
+    <lastmod>2016-07-07T05:34:31.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/04/dive-into-go-11/</loc>
     <lastmod>2016-07-06T05:33:52.000Z</lastmod>
   </url>
@@ -72,42 +77,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/21/goreq-A-simplified-golang-http-client/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-5/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-3/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-2/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-1/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/03/16/why-is-go-gencode-so-fast/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/22/why-is-disruptor-faster-than-ArrayBlockingQueue/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/04/21/web-framework-benchmarks/</loc>
+    <loc>http://colobu.com/2014/09/10/ember-naming-conventions/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -117,12 +87,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/17/what-means-apachebench-test-result/</loc>
+    <loc>http://colobu.com/2015/04/21/web-framework-benchmarks/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2015/05/04/weixin-red-packets-design-discussion/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/09/17/what-means-apachebench-test-result/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -192,6 +167,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/documents/index.html</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/03/10/the-30-css-selectors-you-must-memorize/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -212,7 +192,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/17/spymemcached-vs-xmemcached-vs-Folsom/</loc>
+    <loc>http://colobu.com/2014/12/09/spark-submitting-applications/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -222,7 +202,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/09/spark-submitting-applications/</loc>
+    <loc>http://colobu.com/2016/03/17/spymemcached-vs-xmemcached-vs-Folsom/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -232,12 +212,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/11/spark-sql-quick-start/</loc>
+    <loc>http://colobu.com/2014/12/08/spark-quick-start/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/08/spark-quick-start/</loc>
+    <loc>http://colobu.com/2014/12/11/spark-sql-quick-start/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -247,12 +227,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/20/spark-new-kid-big-data-block/</loc>
+    <loc>http://colobu.com/2014/12/10/spark-configuration/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/10/spark-configuration/</loc>
+    <loc>http://colobu.com/2015/03/20/spark-new-kid-big-data-block/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -262,17 +242,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2014/12/09/spark-cluster-overview/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/08/10/some-REST-best-practices/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -282,7 +252,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/08/10/some-REST-best-practices/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/08/17/snowball-arch/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -302,12 +282,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/09/set-null-for-a-string-property-by-Value/</loc>
+    <loc>http://colobu.com/2014/11/06/secrets-of-java-8-lambda/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/11/06/secrets-of-java-8-lambda/</loc>
+    <loc>http://colobu.com/2015/09/09/set-null-for-a-string-property-by-Value/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -322,12 +302,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/05/24/scala-dsl-tutorial-writing-web-framework-router/</loc>
+    <loc>http://colobu.com/2016/06/19/scala-collections-cookbook-is-available/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/06/19/scala-collections-cookbook-is-available/</loc>
+    <loc>http://colobu.com/2016/05/24/scala-dsl-tutorial-writing-web-framework-router/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -347,17 +327,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/04/16/recommandation-system-implement-in-100-lines/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/07/16/rpc-framework-performance-comparison/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2014/10/16/redo-log-in-distribution-systems/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/04/16/recommandation-system-implement-in-100-lines/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -387,12 +367,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/14/one-config-parameter-in-kafka/</loc>
+    <loc>http://colobu.com/2014/08/19/npm-local-mirror/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/19/npm-local-mirror/</loc>
+    <loc>http://colobu.com/2015/05/14/one-config-parameter-in-kafka/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -412,12 +392,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/17/netty-new-and-noteworthy-in-4-0/</loc>
+    <loc>http://colobu.com/2015/08/18/netty-new-and-noteworthy-in-4-1/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/18/netty-new-and-noteworthy-in-4-1/</loc>
+    <loc>http://colobu.com/2015/08/17/netty-new-and-noteworthy-in-4-0/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -433,11 +413,6 @@
   
   <url>
     <loc>http://colobu.com/2015/10/27/mongodb-backup/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/09/18/linux-tcpip-tuning/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -462,12 +437,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/02/27/material-design-for-PreferenceActivity/</loc>
+    <loc>http://colobu.com/2014/09/18/linux-tcpip-tuning/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/16/layout-animations-on-recyclerview/</loc>
+    <loc>http://colobu.com/2015/02/27/material-design-for-PreferenceActivity/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -477,12 +452,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/11/05/kernel-101-lets-write-a-kernel/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/09/23/laws-of-goang-reflection/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/11/05/kernel-101-lets-write-a-kernel/</loc>
+    <loc>http://colobu.com/2015/09/16/layout-animations-on-recyclerview/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,12 +502,27 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/about/index.html</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/13/consistent-hash-algorithm-in-java-memcached-client/</loc>
+    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -537,7 +532,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/07/31/create-a-new-blog-site-with-githubio-and-hexo/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/04/13/consistent-hash-algorithm-in-java-memcached-client/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -587,27 +592,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/09/05/design-pattern-cheatsheet/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/documents/index.html</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -627,22 +622,42 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-5/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-3/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-4/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-2/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/03/16/why-is-go-gencode-so-fast/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-1/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/22/why-is-disruptor-faster-than-ArrayBlockingQueue/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/07/21/dubbo-performance-test/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/11/05/full-cheatsheet-machine-learning-algorithms/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/09/10/ember-naming-conventions/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -657,12 +672,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/02/go-socket-programming-TCP/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/12/02/go-socket-programming-UDP/</loc>
+    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -672,7 +682,27 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <loc>http://colobu.com/2014/12/02/go-socket-programming-TCP/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/11/05/full-cheatsheet-machine-learning-algorithms/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/02/go-socket-programming-UDP/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/09/21/goreq-A-simplified-golang-http-client/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/10/30/h5-performance/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -683,11 +713,6 @@
   
   <url>
     <loc>http://colobu.com/2015/09/07/gotchas-and-common-mistakes-in-go-golang/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/10/30/h5-performance/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -732,12 +757,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/22/implement-C1000K-servers-by-spray-netty-undertow-and-node-js/</loc>
+    <loc>http://colobu.com/2015/04/20/inside-alipay-architecture/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/20/inside-alipay-architecture/</loc>
+    <loc>http://colobu.com/2015/05/22/implement-C1000K-servers-by-spray-netty-undertow-and-node-js/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -747,17 +772,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/04/java-7-forkjoin-framework/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2014/09/05/java-8-performance-improvements-longadder-vs-atomiclong/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/11/13/java-aio-introduction/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -767,12 +782,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/10/20/java-buffer-basic/</loc>
+    <loc>http://colobu.com/2014/12/04/java-7-forkjoin-framework/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/11/27/java-collections-overview/</loc>
+    <loc>http://colobu.com/2014/11/13/java-aio-introduction/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -782,7 +797,17 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/10/20/java-buffer-basic/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/12/16/java-jvm-memory-model-and-garbage-collection-monitoring-tuning/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/11/27/java-collections-overview/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -792,37 +817,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/05/java-lambdas-hacking/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2014/09/12/java-nio-epoll/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
+    <loc>http://colobu.com/2014/09/05/java-lambdas-hacking/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/26/java-serializer-comparison/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/08/17/MathJax-quick-reference/</loc>
+    <loc>http://colobu.com/2015/05/22/Mean-Mode-Median-and-Standard-Deviation/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -837,12 +842,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/05/04/check-latest-dependencies-in-pom-xml/</loc>
+    <loc>http://colobu.com/2014/08/13/cardinality-estimation/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/13/cardinality-estimation/</loc>
+    <loc>http://colobu.com/2016/05/04/check-latest-dependencies-in-pom-xml/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -867,6 +872,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/08/15/android-components-collection/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/11/15/best-available-java-restful-micro-frameworks/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
@@ -882,17 +892,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/15/android-waveview/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/07/06/android-design-support-library-codelab/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/15/android-components-collection/</loc>
+    <loc>http://colobu.com/2015/09/15/android-waveview/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -902,7 +907,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/19/an-introduction-to-lock-free-programming/</loc>
+    <loc>http://colobu.com/2014/09/28/ZooKeeper-Programmers-Guide/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -912,7 +917,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/28/ZooKeeper-Programmers-Guide/</loc>
+    <loc>http://colobu.com/2015/04/20/What-is-Facebook-s-architecture/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/12/19/an-introduction-to-lock-free-programming/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -922,12 +932,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/20/What-is-Facebook-s-architecture/</loc>
+    <loc>http://colobu.com/2015/04/24/Web-Frameworks-Benchmark-2015/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/24/Web-Frameworks-Benchmark-2015/</loc>
+    <loc>http://colobu.com/2014/08/11/Using-MongoDB-as-Quartz-Jobstore/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -938,11 +948,6 @@
   
   <url>
     <loc>http://colobu.com/2015/07/23/Using-Cgroups-to-Limit-MongoDB-memory-usage/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/08/11/Using-MongoDB-as-Quartz-Jobstore/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -967,12 +972,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/11/StrongReference-SoftReference-WeakReference-and-PhantomReference-in-Java/</loc>
+    <loc>http://colobu.com/2016/04/19/Stack-Traces-In-Go/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/04/19/Stack-Traces-In-Go/</loc>
+    <loc>http://colobu.com/2014/12/11/StrongReference-SoftReference-WeakReference-and-PhantomReference-in-Java/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -982,12 +987,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/06/11/Socket-sharding-implemented-by-netty/</loc>
+    <loc>http://colobu.com/2015/01/15/Spark-in-China/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/15/Spark-in-China/</loc>
+    <loc>http://colobu.com/2015/01/14/Scala-Quick-Start-for-Java-Programmers/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/06/11/Socket-sharding-implemented-by-netty/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1002,11 +1012,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/14/Scala-Quick-Start-for-Java-Programmers/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/06/11/Scala-PartialFunction/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
@@ -1017,12 +1022,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/06/11/Scala-Either-Left-And-Right/</loc>
+    <loc>http://colobu.com/2015/07/02/Scala-Collections-Tips-and-Tricks/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/07/02/Scala-Collections-Tips-and-Tricks/</loc>
+    <loc>http://colobu.com/2015/06/11/Scala-Either-Left-And-Right/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1032,22 +1037,22 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/02/15/Scala-Async/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/07/16/Scala-2-12-Embraces-Java-8/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/05/26/RPCX-a-distributed-rpc-dubbo-like-framework-by-Go/</loc>
+    <loc>http://colobu.com/2016/02/15/Scala-Async/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2015/07/14/Qihoo-360-and-Go/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/05/26/RPCX-a-distributed-rpc-dubbo-like-framework-by-Go/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1077,17 +1082,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/22/Mean-Mode-Median-and-Standard-Deviation/</loc>
+    <loc>http://colobu.com/2014/08/17/MathJax-quick-reference/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2015/01/26/complete-java-servlets-tutorial/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/09/18/Linux-Performance-Analysis-and-Tools/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1102,17 +1102,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/11/17/Jax-RS-Performance-Comparison/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/09/23/JavaScript-Module-Pattern-In-Depth/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/08/08/Java-bean-validation-spec-and-framework/</loc>
+    <loc>http://colobu.com/2014/09/18/Linux-Performance-Analysis-and-Tools/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1122,12 +1112,27 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/14/Java-GC-memo/</loc>
+    <loc>http://colobu.com/2014/08/08/Java-bean-validation-spec-and-framework/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2014/09/23/JavaScript-Module-Pattern-In-Depth/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/11/17/Jax-RS-Performance-Comparison/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2016/02/29/Java-CompletableFuture/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/04/14/Java-GC-memo/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1167,6 +1172,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/09/07/How-to-Write-Go-Code/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/12/23/How-to-make-your-code-self-documenting/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
@@ -1182,7 +1192,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/07/How-to-Write-Go-Code/</loc>
+    <loc>http://colobu.com/2015/10/31/How-to-Clear-RAM-Memory-Cache-Buffer-and-Swap-Space-on-Linux/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1192,22 +1202,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/10/31/How-to-Clear-RAM-Memory-Cache-Buffer-and-Swap-Space-on-Linux/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/08/24/Hidden-Features-of-Programming-Languages/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/09/28/Golang-Serializer-Benchmark-Comparison/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/04/14/Golang-Generics-Proposal/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1222,12 +1217,17 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/04/14/G1-Getting-Started/</loc>
+    <loc>http://colobu.com/2015/09/28/Golang-Serializer-Benchmark-Comparison/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/04/14/Futures-and-Promises-in-golang/</loc>
+    <loc>http://colobu.com/2016/04/14/Golang-Generics-Proposal/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/04/14/G1-Getting-Started/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1237,12 +1237,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/16/Drag-and-Swipe-with-RecyclerView-2/</loc>
+    <loc>http://colobu.com/2016/04/14/Futures-and-Promises-in-golang/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/16/Drag-and-Swipe-with-RecyclerView-1/</loc>
+    <loc>http://colobu.com/2015/09/16/Drag-and-Swipe-with-RecyclerView-2/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1257,6 +1257,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/09/16/Drag-and-Swipe-with-RecyclerView-1/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/08/11/Copy-properties-between-java-beans/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
@@ -1267,12 +1272,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/10/22/CRC-introduction/</loc>
+    <loc>http://colobu.com/2015/05/19/CQRS-and-Event-sourcing/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/19/CQRS-and-Event-sourcing/</loc>
+    <loc>http://colobu.com/2014/10/22/CRC-introduction/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1282,12 +1287,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/24/Best-Practices-of-Asynchronous-Programming-With-Java/</loc>
+    <loc>http://colobu.com/2014/08/22/Benchmark-of-some-popular-frameworks/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/08/22/Benchmark-of-some-popular-frameworks/</loc>
+    <loc>http://colobu.com/2015/03/24/Best-Practices-of-Asynchronous-Programming-With-Java/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1307,11 +1312,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/28/Akka-actor-scheduling/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/03/06/7-CSS-Units-You-Might-Not-Know-About/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
@@ -1322,17 +1322,22 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2015/05/28/Akka-actor-scheduling/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/02/23/1M-threads-microbenchmark/</loc>
+    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2014/08/01/3-steps-to-create-a-disruptor-application/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2015/01/21/22-to-know-css-techniques/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/02/23/1M-threads-microbenchmark/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
