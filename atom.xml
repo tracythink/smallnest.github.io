@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-08T09:07:19.780Z</updated>
+  <updated>2016-07-11T06:47:13.995Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -13,6 +13,176 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[深入Go语言 - 13]]></title>
+    <link href="http://colobu.com/2016/07/09/dive-into-go-13/"/>
+    <id>http://colobu.com/2016/07/09/dive-into-go-13/</id>
+    <published>2016-07-09T09:16:26.000Z</published>
+    <updated>2016-07-11T06:46:34.000Z</updated>
+    <content type="html"><![CDATA[<p>本章重点介绍Go语言中的反射。<br>包<a href="https://golang.org/pkg/reflect/" target="_blank" rel="external">reflect</a>可以实现运行时的反射，允许程序操纵对象的值和类型。<br>典型地，你可以获取 interface{}的动态类型以及的它的值和方法。</p>
+<p>Go是静态类型的语言，每一个对象在声明和初始化的时候都已经有一个确定值，即使是声明为接口类型的变量，它的静态类型也已经确定，即使任何包含这个接口方法集的类型的对象都可以赋值给它。</p>
+<p>我们可以在运行时获取对象的动态类型和值。</p>
+<p>类型Type和值Value是我们使用发射库的主要用的两个概念。</p>
+<a id="more"></a>
+<h3 id="Type">Type</h3>
+<p><code>Type</code>是一个interface,代表Go中的一个类型，可以把它看成某个类型的元数据(描述类型的类型)，这个类型既可以是Go语言或者库中定义的type类型，也可以你自己定义的type类型。</p>
+<p>下面我们介绍它的主要方法以及一些辅助方法。</p>
+<p>值得注意的是，并不是所有的方法都对某种类型有效，比如有些方法只对函数类型有意义，有的只对Struct有意义。如果对某个类型调用了错误的方法，则会发生运行时的panic，比如针对struct Type，调用<code>IsVariadic</code>方法。所以最好先判断一下Type的Kind。</p>
+<p>首先我们先为下面的例子定义一个简单的struct用来测试, Bird有三个字段Field和三个方法，其中两个字段和两个方法是导出的:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Bird <span class="keyword">struct</span> {</div><div class="line">	Name  <span class="typename">string</span></div><div class="line">	Color <span class="typename">string</span></div><div class="line">	age   <span class="typename">int</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (b Bird) Sing() <span class="typename">string</span> {</div><div class="line">	<span class="keyword">return</span> <span class="string">"sing"</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (b *Bird) Fly() <span class="typename">string</span> {</div><div class="line">	<span class="keyword">return</span> <span class="string">"fly"</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (b *Bird) food() {</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p><code>TypeOf</code>返回一个接口对象的动态类型，也就是类型<code>reflect.Type</code>的一个值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> bird = Bird{Name: <span class="string">"parrot"</span>, Color: <span class="string">"blue"</span>}</div><div class="line"><span class="keyword">var</span> t reflect.Type</div><div class="line">t = reflect.TypeOf(bird)</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Name</strong>、<strong>PkgPath</strong>、<strong>String</strong><br>返回动态类型的名称，包名以及字符串表示。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t.Name()) <span class="comment">//Bird</span></div><div class="line">fmt.Println(t.String()) <span class="comment">//main.Bird</span></div><div class="line">fmt.Println(t.PkgPath()) <span class="comment">//main</span></div></pre></td></tr></table></figure>
+
+<p>Name返回类型名，如Bird,对于未定义名称的类型，返回空字符串。</p>
+<p>PkgPath返回包名，代表这个包的唯一标识符，所以可能是单一的包名，或者<code>encoding/base64</code>。对于Go内置的类型string,error等，或者未定义名称的类型struct{}等，则返回空字符串。</p>
+<p>String方法返回这个类型的字符串表示，包名可能用简写表示。</p>
+<ul>
+<li><strong>Kind</strong><br>返回类型的分类。 你自己定义的类型必定属于下面的某一类：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">        Invalid Kind = <span class="constant">iota</span></div><div class="line">        Bool</div><div class="line">        Int</div><div class="line">        Int8</div><div class="line">        Int16</div><div class="line">        Int32</div><div class="line">        Int64</div><div class="line">        Uint</div><div class="line">        Uint8</div><div class="line">        Uint16</div><div class="line">        Uint32</div><div class="line">        Uint64</div><div class="line">        Uintptr</div><div class="line">        Float32</div><div class="line">        Float64</div><div class="line">        Complex64</div><div class="line">        Complex128</div><div class="line">        Array</div><div class="line">        Chan</div><div class="line">        Func</div><div class="line">        Interface</div><div class="line">        Map</div><div class="line">        Ptr</div><div class="line">        Slice</div><div class="line">        String</div><div class="line">        Struct</div><div class="line">        UnsafePointer</div><div class="line">)</div></pre></td></tr></table></figure>
+
+<p>例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t.Kind()) <span class="comment">//struct</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Size</strong>、<strong>Bits</strong>、<strong>Align</strong>、<strong>FieldAlign</strong></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">	fmt.Println(t.Size()) <span class="comment">//40</span></div><div class="line">	<span class="comment">//fmt.Println(t.Bits())       //panic</span></div><div class="line">	fmt.Println(t.Align())      <span class="comment">//8</span></div><div class="line">	fmt.Println(t.FieldAlign()) <span class="comment">//8</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p><code>Size</code>返回存储这个类型的一个值所需要的字节数，它返回要保存储这个值需要的内存，而不会计算它引用的内存的大小。 比如字符串是以<code>StringHeader</code>类型来存储的，它包含一个指针指向内存字符存储的数据，它的size只计算存储这个结构所需的内存，而不会计算指针指向的数据占用的字节数的，数据会对齐的。</p>
+<p><code>Bits</code>返回类型的size，以bit计算，但是如果类型不是Int、Uint、Float、Complex之一则panic。</p>
+<p><code>Algin</code>是这个类型的一个变量在内存中的对齐后的所用的字节数。<code>FieldAlign</code>指这种类型的变量如果是struct中的字段，那么它对齐后所用的字节数。</p>
+<p>对于gc编译器来讲,<code>Align</code>和<code>FieldAlign</code>是一样的，但是对于gccgo来讲，它们可能不同。</p>
+<p>还有下面会讲到的<code>reflect.StructField.Offset</code>,它是某个字段在struct中的偏移量，一起考虑了前面字段的对齐。</p>
+<blockquote>
+<p><em>为什么要对齐?</em><br>第一个原因——很多CPU只从对齐的地址开始加载数据，而有的CPU这样做，只是更快一点。<br>第二个原因——外部总线从内存一次获取的数据往往不是1byte，而是4bytes或许8bytes,或者更多~~<br>引子<a href="http://www.zhihu.com/question/23791224" target="_blank" rel="external">知乎</a></p>
+</blockquote>
+<p>注意<code>Size</code>是值占用的字节数，而<code>Align</code>是变量占的字节数。</p>
+<p>比如在我当前的开发环境下(64-bit windows 10), 字符串的<code>Size</code>为16个字节，而字符串的<code>Align</code>为8, int类型的<code>Size</code>和<code>Align</code>都是8, int32的<code>Size</code>和<code>Align</code>都是4。</p>
+<ul>
+<li><strong>Implements</strong>、<strong>AssignableTo</strong>、<strong>ConvertibleTo</strong>、<strong>Comparable</strong></li>
+</ul>
+<p><code>Implements</code>返回类型是否实现了某个接口,如果参数的类型不是interface类型，则会panic。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> r *io.Reader</div><div class="line">t1 := reflect.TypeOf(r).Elem()</div><div class="line">t2 := reflect.TypeOf(&os.Stdout).Elem()</div><div class="line"></div><div class="line">fmt.Println(t.Implements(t1))  <span class="comment">//false</span></div><div class="line">fmt.Println(t2.Implements(t1)) <span class="comment">//true</span></div></pre></td></tr></table></figure>
+
+<p><code>AssignableTo</code>一个类型的值是否可以赋值给参数指定的类型,下面的例子中Bird类型的指针对象可以赋值给IBird接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> IBird <span class="keyword">interface</span> {</div><div class="line">	Sing() <span class="typename">string</span></div><div class="line">	Fly() <span class="typename">string</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">var</span> i IBird = &bird</div><div class="line">fmt.Println(t.AssignableTo(reflect.TypeOf(i).Elem()))</div></pre></td></tr></table></figure>
+
+<p><code>ConvertibleTo</code> 一个类型的值是否可以转换成另一个类型的值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Bird2 Bird</div><div class="line"><span class="keyword">var</span> bird2 Bird2</div><div class="line">t3 := reflect.TypeOf(bird2)</div><div class="line">fmt.Println(t3.ConvertibleTo(t)) <span class="comment">//true</span></div><div class="line">bird = Bird(bird2)               <span class="comment">//可以转换</span></div></pre></td></tr></table></figure>
+
+<p><code>Comparable</code>返回类型是否可以比较：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t.Comparable()) <span class="comment">//true</span></div></pre></td></tr></table></figure>
+
+<p>类型如果可以比较，就可以使用<code>==</code>、<code>!=</code>运算符。可以参看 <a href="http://colobu.com/2016/06/20/dive-into-go-5/#%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6" target="_blank" rel="external">比较运算符</a>。</p>
+<ul>
+<li><strong>NumField</strong>、<strong>Field</strong>、<strong>FieldByIndex</strong>、<strong>FieldByName</strong>、<strong>FieldByNameFunc</strong><br>这一组方法用来获取Struct的Field的信息，这个信息通过StructField类型来描述。如果类型不是Struct,调用相应的方法导致运行时panic。</li>
+</ul>
+<p><code>NumField</code>返回Struct的字段的数量。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t4.NumField()) <span class="comment">//1</span></div></pre></td></tr></table></figure>
+
+<p><code>Field</code>返回struct的第i个字段的信息，包括未导出对象的信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t.Field<span class="number">(0</span>)) <span class="comment">//{Name  string  0 [0] false}</span></div><div class="line">fmt.Println(t.Field<span class="number">(1</span>)) <span class="comment">//{Color  string  16 [1] false}</span></div><div class="line">fmt.Println(t.Field<span class="number">(2</span>)) <span class="comment">//{age github.com/smallnest/dive-into-go/ch12/model int  32 [2] false}</span></div></pre></td></tr></table></figure>
+
+<p><code>FieldByIndex</code>对于嵌套的Struct,可以递归地得到某一层的字段的信息：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> S1 <span class="keyword">struct</span> {</div><div class="line">		Name <span class="typename">string</span></div><div class="line">		Age  <span class="typename">int</span></div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="keyword">type</span> S2 <span class="keyword">struct</span> {</div><div class="line">		S1</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="keyword">type</span> S3 <span class="keyword">struct</span> {</div><div class="line">		S2</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="keyword">var</span> s S3</div><div class="line">	t4 := reflect.TypeOf(s)</div><div class="line">	fmt.Println(t4.FieldByIndex([]<span class="typename">int</span><span class="number">{0</span>,<span class="number"> 0</span>,<span class="number"> 1</span>})) <span class="comment">//{Age  int  16 [1] false}</span></div></pre></td></tr></table></figure>
+
+<p>这个例子S3嵌套S2，S2嵌套S1,我们通过0,0,1就可以得到S1的字段Age的信息。</p>
+<p><code>FieldByName</code>根据名称得到字段的信息：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t4.FieldByName(<span class="string">"Name"</span>)) <span class="comment">//{Name  string  0 [0 0 0] false} true</span></div></pre></td></tr></table></figure>
+
+<p><code>FieldByNameFunc</code>根据一个函数筛选字段，返回第一个符合条件的字段：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t4.FieldByNameFunc(<span class="keyword">func</span>(n <span class="typename">string</span>) <span class="typename">bool</span> {</div><div class="line">	<span class="keyword">if</span> n == <span class="string">"Age"</span> {</div><div class="line">		<span class="keyword">return</span> <span class="constant">true</span></div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="keyword">return</span> <span class="constant">false</span></div><div class="line">}))</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>NumMethod</strong>、<strong>Method</strong>、<strong>MethodByName</strong>、<br>这是一组操作类型的方法的一组方法。</li>
+</ul>
+<p>对于非接口的类型T或者*T,它的方法类型和函数字段描述了方法的第一个参数就是receiver。</p>
+<p>对于接口类型，它的方法类型的Func字段总是为nil。</p>
+<p><code>NumMethod</code>返回这个类型的方法集中方法的数量, <code>Method</code>返回第i个方法的信息：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">fmt.Println(t.NumMethod())  <span class="comment">//1</span></div><div class="line">fmt.Println(t.Method<span class="number">(0</span>))    <span class="comment">//{Sing  func(model.Bird) string &lt;func(model.Bird) string Value&gt; 0}</span></div><div class="line">t5 := reflect.TypeOf(&bird)</div><div class="line">fmt.Println(t5.NumMethod()) <span class="comment">//3</span></div><div class="line">fmt.Println(t5.Method<span class="number">(0</span>)) <span class="comment">//{Fly  func(*model.Bird) string &lt;func(*model.Bird) string Value&gt; 0}</span></div><div class="line">fmt.Println(t5.Method<span class="number">(1</span>)) <span class="comment">//{Sing  func(*model.Bird) string &lt;func(*model.Bird) string Value&gt; 1}</span></div><div class="line">fmt.Println(t5.Method<span class="number">(2</span>)) <span class="comment">//{food github.com/smallnest/dive-into-go/ch12/model func(*model.Bird) &lt;func(*model.Bird) Value&gt; 2}</span></div></pre></td></tr></table></figure>
+
+<p><code>MethodByName</code>则是根据名称查找方法。</p>
+<ul>
+<li><strong>NumIn</strong>、<strong>In</strong>、<strong>NumOut</strong>、<strong>Out</strong>、<strong>IsVariadic</strong><br>对于函数类型，我们关注的是它的输入参数信息<code>Int</code>和输出参数信息<code>Out</code>。<br><code>IsVariadic</code>返回函数是否是变参的。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">f := http.ListenAndServe</div><div class="line">ft := reflect.TypeOf(f)</div><div class="line">fmt.Println(ft.NumIn())  <span class="comment">//2</span></div><div class="line">fmt.Println(ft.In<span class="number">(0</span>))    <span class="comment">//string</span></div><div class="line">fmt.Println(ft.NumOut()) <span class="comment">//1</span></div><div class="line">fmt.Println(ft.Out<span class="number">(0</span>))   <span class="comment">//error</span></div><div class="line">fmt.Println(ft.IsVariadic()) <span class="comment">//false</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Key</strong><br><code>Key</code>方法返回map类型的key的类型，如果不是map类型，则调用此方法会panic。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> m <span class="keyword">map</span>[<span class="typename">string</span>]<span class="typename">int</span></div><div class="line">mt := reflect.TypeOf(m)</div><div class="line">fmt.Println(mt.Key())</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Elem</strong><br><code>Elem</code>方法返回类型 Array, Chan, Map, Ptr,  Slice的元素的类型。</li>
+</ul>
+<p>对于Map类型，它返回的值的类型。</p>
+<p>对于指针类型Ptr，它返回指针指向的元素的类型。</p>
+<p>对于Chan,它返回传递的元素的类型。</p>
+<p>数组和Slice返回的是它包含的元素的类型。</p>
+<ul>
+<li><p><strong>Len</strong><br><code>Len</code>返回数组的长度，因为数组的类型中包含长度的定义。如果不是数组则会panic。</p>
+</li>
+<li><p><strong>ChanDir</strong><br>返回channel的方向, chan、chan&lt;-、&lt;-chan</p>
+</li>
+</ul>
+<h3 id="Value">Value</h3>
+<p>Value描述对象的值信息，同样，并不是所有的方法对任何的类型都有意义，特定的方法只适用于特定的类型。</p>
+<p>零值代表没有值，它的<code>IsValid</code>总是返回false，它的<code>Kind</code>总是返回Invalid，它的String总是返回&quot;<invalid value="">&quot;。</invalid></p>
+<p>A Value can be used concurrently by multiple goroutines provided that the underlying Go value can be used concurrently for the equivalent direct operations.</p>
+<p>Using == on two Values does not compare the underlying values they represent, but rather the contents of the Value structs. To compare two Values, compare the results of the Interface method.</p>
+<p>本文中不准备详细阐述Value对象的方法。不是这些方法不重要，而是它的方法太多了。</p>
+<p>它针对每一中类型的操作都提供了相应的方法，比如slice类型，有Append、AppendSlice等方法、Map有MapIndex、MapKeys等方法、Struct有Field、FieldByIndex等方法。 注意Value的Field方法返回的是字段的值类型Value,而不是字段的类型描述Type。还有针对数值型、Bool型、Channel类型的方法等。</p>
+<p><code>Indirect</code>返回指针指向的对象，如果不是指针，则返回参数本身。</p>
+<p><code>Addr</code>返回一个可寻址的对象的指针。 只有slice的元素、可寻址的数组的元素、可寻址的struct的字段、指针的可寻址的结果才可以调用Addr方法。可以通过<code>CabAddr</code>检查。可以查看Go规范中的描述:<a href="https://golang.org/ref/spec#Address_operators" target="_blank" rel="external">Address operators</a>。</p>
+<p><code>Zero</code>返回类型的零值。</p>
+<p>一组SetXxx方法用来设置值的值(好绕口)。</p>
+<p>下面是一组辅助函数，生成Value对象：<br><code>MakeChan</code>、<code>MakeFunc</code>、<code>MakeMap</code>、<code>MakeSlice</code>、<code>New</code>、<code>NewAt</code>生成某个类型的值Value。<br><code>ValueOf</code>从接口对象返回Value。</p>
+<h3 id="转换">转换</h3>
+<p>1、 从接口对象到反射对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> x <span class="typename">float64</span> =<span class="number"> 3.4</span></div><div class="line">  fmt.Println(<span class="string">"type:"</span>, reflect.TypeOf(x))</div><div class="line">fmt.Println(<span class="string">"value:"</span>, reflect.ValueOf(x))</div></pre></td></tr></table></figure>
+
+<p>2、从反射对象到接口对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> (v Value) Interface() <span class="keyword">interface</span>{}</div></pre></td></tr></table></figure>
+
+<p>如果想转为特定的类型的对象,可以用type assertion：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">y := v.Interface().(<span class="typename">float64</span>)</div></pre></td></tr></table></figure>
+
+<p>3、修改反射对象<br>对象的值必须是可设置的,可以用CanSet方法判断。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> x <span class="typename">float64</span> =<span class="number"> 3.4</span></div><div class="line">p := reflect.ValueOf(&x)</div><div class="line">v := p.Elem()</div><div class="line">v.SetFloat<span class="number">(7.1</span>)</div><div class="line">fmt.Println(v.Interface())</div><div class="line">fmt.Println(x)</div></pre></td></tr></table></figure>
+
+<p>也有一些第三方的简化go reflect的库，如<a href="https://github.com/tkrajina/go-reflector" target="_blank" rel="external">go-reflector</a>。</p>
+<p>反射经常用在序列化和反序列的实现中，如官方的<a href="https://golang.org/src/encoding/json/decode.go" target="_blank" rel="external">json</a>、<a href="https://golang.org/src/encoding/xml/marshal.go" target="_blank" rel="external">xml</a>库。</p>
+<p>但是请记住一点，发射的性能并不高，所以很多序列化库采用代码模版的方式生成Model对象，而不是反射的方式序列化和反序列化对象。</p>
+<p>参考</p>
+<ul>
+<li><a href="http://blog.golang.org/laws-of-reflection" target="_blank" rel="external">http://blog.golang.org/laws-of-reflection</a></li>
+<li><a href="http://golang.org/pkg/reflect/" target="_blank" rel="external">http://golang.org/pkg/reflect/</a></li>
+<li><a href="http://research.swtch.com/interfaces" target="_blank" rel="external">http://research.swtch.com/interfaces</a></li>
+<li><a href="http://my.oschina.net/tongjh/blog/513540" target="_blank" rel="external">http://my.oschina.net/tongjh/blog/513540</a></li>
+<li><a href="http://blog.altoros.com/golang-internals-part-6-bootstrapping-and-memory-allocator-initialization.html" target="_blank" rel="external">http://blog.altoros.com/golang-internals-part-6-bootstrapping-and-memory-allocator-initialization.html</a></li>
+<li><a href="http://grokbase.com/t/gg/golang-nuts/153kv99728/go-nuts-how-to-use-reflect-type-implements" target="_blank" rel="external">http://grokbase.com/t/gg/golang-nuts/153kv99728/go-nuts-how-to-use-reflect-type-implements</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>本章重点介绍Go语言中的反射。<br>包<a href="https://golang.org/pkg/reflect/" target="_blank" rel="external">reflect</a>可以实现运行时的反射，允许程序操纵对象的值和类型。<br>典型地，你可以获取 interface{}的动态类型以及的它的值和方法。</p>
+<p>Go是静态类型的语言，每一个对象在声明和初始化的时候都已经有一个确定值，即使是声明为接口类型的变量，它的静态类型也已经确定，即使任何包含这个接口方法集的类型的对象都可以赋值给它。</p>
+<p>我们可以在运行时获取对象的动态类型和值。</p>
+<p>类型Type和值Value是我们使用发射库的主要用的两个概念。</p>
+]]>
+    
+    </summary>
+    
+      <category term="Go" scheme="http://colobu.com/categories/Go/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[[转]系统之锹sysdig：Linux服务器监控和排障利器]]></title>
@@ -2954,262 +3124,6 @@ Precedence    Operator
       <category term="StampedLock" scheme="http://colobu.com/tags/StampedLock/"/>
     
       <category term="Java" scheme="http://colobu.com/categories/Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[RPCX: 一个用Go实现的类似Dubbo的分布式RPC框架]]></title>
-    <link href="http://colobu.com/2016/05/26/RPCX-a-distributed-rpc-dubbo-like-framework-by-Go/"/>
-    <id>http://colobu.com/2016/05/26/RPCX-a-distributed-rpc-dubbo-like-framework-by-Go/</id>
-    <published>2016-05-26T08:24:58.000Z</published>
-    <updated>2016-06-21T08:57:04.000Z</updated>
-    <content type="html"><![CDATA[<p>rpcx是一个类似阿里巴巴 <a href="http://dubbo.io/" target="_blank" rel="external">Dubbo</a> 和微博 <a href="https://github.com/weibocom/motan" target="_blank" rel="external">Motan</a> 的分布式的RPC服务框架，基于Golang net/rpc实现。 </p>
-<p>谈起分布式的RPC框架，比较出名的是阿里巴巴的dubbo,包括由当当网维护的dubbox。<br>不知道dubbo在阿里的内部竞争中败给了HSF，还是阿里有意将其闭源了，官方的代码使用的spring还停留在2.5.6.SEC03的版本，dubbox的spring也只升级到3.2.9.RELEASE。<br>不管怎样，dubbo还是在电商企业得到广泛的应用，京东也有部分在使用dubbo开发。</p>
-<blockquote>
-<p>DUBBO是一个分布式服务框架，致力于提供高性能和透明化的RPC远程服务调用方案，是阿里巴巴SOA服务化治理方案的核心框架，每天为2,000+个服务提供3,000,000,000+次访问量支持，并被广泛应用于阿里巴巴集团的各成员站点。<br>微博的RPC框架 Motan 也正式开源了，如张雷所说：</p>
-<p>2013 年微博 RPC 框架 Motan 在前辈大师们（福林、fishermen、小麦、王喆等）的精心设计和辛勤工作中诞生，向各位大师们致敬，也得到了微博各个技术团队的鼎力支持及不断完善，如今 Motan 在微博平台中已经广泛应用，每天为数百个服务完成近千亿次的调用。</p>
-</blockquote>
-<p>这两个个优秀的框架都是使用Java开发的，国外的互联网企业也有非常出名的的RPC框架如<a href="https://thrift.apache.org/" target="_blank" rel="external">thrift</a>、<a href="https://github.com/twitter/finagle" target="_blank" rel="external">finagle</a>。</p>
-<p>本项目<a href="https://github.com/smallnest/rpcx" target="_blank" rel="external">rpcx</a>的目标就是实现一个Go生态圈的Dubbo，为Go生态圈提供一个分布式的、多插件的、带有服务治理功能的产品级的RPC框架。</p>
-<p>Go生态圈已经有一些RPC库，如官方的<a href="https://golang.org/pkg/net/rpc/" target="_blank" rel="external">net/rpc</a>、<a href="https://github.com/grpc/grpc-go" target="_blank" rel="external">grpc-go</a>、<a href="http://www.gorillatoolkit.org/pkg/rpc" target="_blank" rel="external">gorilla-rpc</a>等，为什么还要开发<strong>rpcx</strong>呢？</p>
-<p>原因在于尽管这些框架都是为Go实现的RPC库，但是它们的功能比较单一，只是实现了点对点(End-to-End)的通讯框架。缺乏服务治理的功能，比如服务注册和发现、<br>负载均衡、容灾、服务监控等功能。因此我基于Go net/rpc框架实现了一个类似Dubbo的分布式框架。</p>
-<p>和rpcx比较类似的Go RPC框架是<a href="https://github.com/micro/go-micro" target="_blank" rel="external">go-micro</a>，但是rpcx提供了更丰富的功能，基于TCP的通讯协议性能更好。</p>
-<a id="more"></a>
-<h2 id="RPC是什么">RPC是什么</h2>
-<p>远程过程调用（英语：Remote Procedure Call，缩写为 RPC）是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作远程调用或远程方法调用，例：Java RMI。<br>简单地说就是能使应用像调用本地方法一样的调用远程的过程或服务。很显然，这是一种client-server的交互形式，调用者(caller)是client,执行者(executor)是server。典型的实现方式就是request–response通讯机制。</p>
-<p>RPC 是进程之间的通讯方式(inter-process communication, IPC), 不同的进程有不同的地址空间。<br>如果client和server在同一台机器上，尽管物理地址空间是相同的，但是虚拟地址空间不同。<br>如果它们在不同的主机上，物理地址空间也不同。</p>
-<p>RPC的实现的技术各不相同，也不一定兼容。</p>
-<p>一个正常的RPC过程可以分成下面几步：</p>
-<ol>
-<li>client调用client stub，这是一次本地过程调用</li>
-<li>client stub将参数打包成一个消息，然后发送这个消息。打包过程也叫做 marshalling</li>
-<li>client所在的系统将消息发送给server</li>
-<li>server的的系统将收到的包传给server stub</li>
-<li>server stub解包得到参数。 解包也被称作 unmarshalling</li>
-<li>最后server stub调用服务过程. 返回结果按照相反的步骤传给client</li>
-</ol>
-<p>RPC只是描绘了 Client 与 Server 之间的点对点调用流程，包括 stub、通信、RPC 消息解析等部分，在实际应用中，还需要考虑服务的高可用、负载均衡等问题，所以产品级的 RPC 框架除了点对点的 RPC 协议的具体实现外，还应包括服务的发现与注销、提供服务的多台 Server 的负载均衡、服务的高可用等更多的功能。<br>目前的 RPC 框架大致有两种不同的侧重方向，一种偏重于服务治理，另一种偏重于跨语言调用。</p>
-<p>服务治理型的 RPC 框架有 Dubbo、DubboX、Motan 等，这类的 RPC 框架的特点是功能丰富，提供高性能的远程调用以及服务发现及治理功能，适用于大型服务的微服务化拆分以及管理，对于特定语言（Java）的项目可以十分友好的透明化接入。但缺点是语言耦合度较高，跨语言支持难度较大。</p>
-<p>跨语言调用型的 RPC 框架有 Thrift、gRPC、Hessian、Hprose 等，这一类的 RPC 框架重点关注于服务的跨语言调用，能够支持大部分的语言进行语言无关的调用，非常适合于为不同语言提供通用远程服务的场景。但这类框架没有服务发现相关机制，实际使用时一般需要代理层进行请求转发和负载均衡策略控制。</p>
-<p>本项目 rpcx 属于服务治理类型，是一个基于 Go 开发的高性能的轻量级 RPC 框架，Motan 提供了实用的服务治理功能和基于插件的扩展能力。</p>
-<h2 id="RPCX的特点">RPCX的特点</h2>
-<p>rpcx使用Go实现，适合使用Go语言实现RPC的功能。</p>
-<ul>
-<li>基于net/rpc,可以将net/rpc实现的RPC项目轻松的转换为分布式的RPC</li>
-<li>插件式设计，可以配置所需的插件，比如服务发现、日志、统计分析等</li>
-<li>基于TCP长连接,只需很小的额外的消息头</li>
-<li>支持多种编解码协议，如Gob、Json、MessagePack、gencode、ProtoBuf等</li>
-<li>服务发现：服务发布、订阅、通知等，支持多种发现方式如ZooKeeper、Etcd等</li>
-<li>高可用策略：失败重试（Failover）、快速失败（Failfast）</li>
-<li>负载均衡：支持随机请求、轮询、低并发优先、一致性 Hash等</li>
-<li>规模可扩展，可以根据性能的需求增减服务器</li>
-<li>其他：调用统计、访问日志等</li>
-</ul>
-<p>rpcx目标是轻量级的，小而简单，但是期望所有的功能都可以通过插件的方式搭积木的方式完成。</p>
-<h2 id="RPCX架构">RPCX架构</h2>
-<p>rpcx中有服务提供者 RPC Server，服务调用者 RPC Client 和服务注册中心 Registry 三个角色。</p>
-<ul>
-<li>Server 向 Registry 注册服务，并向注册中心发送心跳汇报状态(基于不同的registry有不同的实现)。</li>
-<li>Client 需要向注册中心查询 RPC 服务者列表，Client 根据 Registry 返回的服务者列表，选取其中一个 Sever 进行 RPC 调用。</li>
-<li>当 Server 发生宕机时，Registry 会监测到服务者不可用(zookeeper session机制或者手工心跳)，Client 感知后会对本地的服务列表作相应调整。client可能被动感知(zookeeper)或者主动定时拉取。</li>
-<li>可选地，Server可以定期向Registry汇报调用统计信息，Client可以根据调用次数选择压力最小的Server</li>
-</ul>
-<p><img src="component.png" alt=""></p>
-<p>当前rpcx支持zookeeper, etcd等注册中心，Consul注册中心正在开发中。</p>
-<p>rpcx基于Go net/rpc的底层实现， Client和Server之间通讯是通过TCP进行通讯的，它们之间通过Client发送Request，Server返回Response实现。<br>Request和Response消息的格式都是<code>Header+Body</code>的格式。Header和Body具体的格式根据编码方式的不同而不同，可以是二进制，也可以是结构化数据如JSON。</p>
-<h2 id="RPCX的特性">RPCX的特性</h2>
-<p>rpcx拥有众多特性。</p>
-<h3 id="服务器特性">服务器特性</h3>
-<h4 id="编码_(序列化)">编码 (序列化)</h4>
-<p>rpcx当前支持多种序列化/反序列化的方式，可以根据需求选择合适的编码库。</p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>功能描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="https://golang.org/pkg/encoding/gob/" target="_blank" rel="external">gob</a></td>
-<td>官方提供的序列化方式，基于一个包含元数据的流</td>
-</tr>
-<tr>
-<td><a href="https://golang.org/pkg/net/rpc/jsonrpc/" target="_blank" rel="external">jsonrpc</a></td>
-<td>也是官方提供的编码库，以JSON格式传输</td>
-</tr>
-<tr>
-<td><a href="http://msgpack.org/" target="_blank" rel="external">msgp</a></td>
-<td>类似json格式的编码，但是更小更快，可以直接编码struct</td>
-</tr>
-<tr>
-<td><a href="https://github.com/andyleap/gencode" target="_blank" rel="external">gencode</a></td>
-<td>一个超级快的序列化库，需要定义schema,但是定义方式和struct类似</td>
-</tr>
-<tr>
-<td><a href="https://github.com/google/protobuf" target="_blank" rel="external">protobuf</a></td>
-<td>Google推出的广受关注的序列化库，推荐使用<a href="https://github.com/gogo/protobuf" target="_blank" rel="external">gogo-protobuf</a>，可以获得更高的性能</td>
-</tr>
-</tbody>
-</table>
-<p>在数据结构简单的情况下，这几种库都可以满足需求，参照本文中的benchmark测试。但是如果追求性能，建议采用后面三种序列化库。</p>
-<p>序列化库的选择对于RPC服务的影响是巨大的，我创建了另外一个项目专门比较各序列化库的性能： <a href="https://github.com/smallnest/gosercomp" target="_blank" rel="external">gosercomp</a>。</p>
-<p>新的序列化库的实现也非常简单，只需实现下面两个方法即可：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> NewXXXXXServerCodec(conn io.ReadWriteCloser) rpc.ServerCodec {</div><div class="line">    ……</div><div class="line">}</div><div class="line"><span class="keyword">func</span> NewXXXXXClientCodec(conn io.ReadWriteCloser) rpc.ClientCodec {</div><div class="line">    ……</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>编码库负责marshal/unmarshal Reuqest/Response， 包括消息中的Header和Body。<br>如果你想，你也可以对Header和Body实现不同的编码。</p>
-<h4 id="注册中心">注册中心</h4>
-<p>目前提供了两种注册中心:</p>
-<ul>
-<li><strong>ZooKeeperRegisterPlugin</strong><br>通过ZooKeeper实现服务发现。<br>服务在注册的时候会自动在ZooKeeper上创建一个Ephemeral节点，因此当服务宕机的时候此节点就被删除，Client也会感知到。<br>同时，Server也会把调用次数定时更新到ZooKeeper，这样Client可以根据一段时间的调用次数选择压力较小的服务器节点进行连接。</li>
-</ul>
-<p>注册中心的配置只需在服务器初始化的时候增加以下代码，服务的实现无需做任何的改动，也不需要额外的配置。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">plugin := &ZooKeeperRegisterPlugin{</div><div class="line">	ServiceAddress:   <span class="string">"tcp@127.0.0.1:1234"</span>,</div><div class="line">	ZooKeeperServers: []<span class="typename">string</span>{<span class="string">"127.0.0.1:2181"</span>},</div><div class="line">	BasePath:         <span class="string">"/betterrpc"</span>,</div><div class="line">	metrics:          metrics.NewRegistry(),</div><div class="line">	Services:         <span class="built_in">make</span>([]<span class="typename">string</span>,<span class="number"> 1</span>),</div><div class="line">	updateInterval:   time.Minute,</div><div class="line">}</div><div class="line">   server.PluginContainer.Add(plugin)</div></pre></td></tr></table></figure>
-
-<p>其中ServiceAddress为本机(Server)要暴露给Client地址。因为ZooKeeper的节点名不支持&quot;/&quot;，<br>所以此处用&quot;@&quot;代替&quot;://&quot;。</p>
-<p>ZooKeeperServers为ZK集群的地址。</p>
-<p>BasePath为一个服务组，此组下的服务对于Client都是可见的。</p>
-<ul>
-<li><strong>EtcdRegisterPlugin</strong><br>通过etcd也可以实现服务发现。</li>
-</ul>
-<p>etcd可以通过TTL判断服务器的存活，另外此插件也会定时把调用次数定时更新到etcd。</p>
-<p>此插件可以使用下面的代码配置：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">plugin := &EtcdRegisterPlugin{</div><div class="line">	ServiceAddress: <span class="string">"tcp@127.0.0.1:1234"</span>,</div><div class="line">	EtcdServers:    []<span class="typename">string</span>{<span class="string">"http://127.0.0.1:2379"</span>},</div><div class="line">	BasePath:       <span class="string">"/betterrpc"</span>,</div><div class="line">	metrics:        metrics.NewRegistry(),</div><div class="line">	Services:       <span class="built_in">make</span>([]<span class="typename">string</span>,<span class="number"> 1</span>),</div><div class="line">	updateInterval: time.Minute,</div><div class="line">}</div><div class="line">   server.PluginContainer.Add(plugin)</div></pre></td></tr></table></figure>
-
-<p>注意注册中心插件必须在配置服务之前设置，否则注册中心无法获取要注册的服务信息。</p>
-<h4 id="扩展点">扩展点</h4>
-<p>当前rpcx为server提供了以下扩展点：</p>
-<ul>
-<li>服务注册时</li>
-<li>Client连接时</li>
-<li>读取Request Header的前后</li>
-<li>读取Request Body的前后</li>
-<li>返回Response的前后</li>
-</ul>
-<p>你可以根据这些扩展点编写自己的插件，只需实现相应的接口即可。<br>定义的接口你可以看godoc的IXXXXXXPlugin的定义。</p>
-<p>上面介绍的注册中心就是通过插件的方式实现。同时rpcx还实现了其它的插件，如下面的介绍。</p>
-<ul>
-<li>LogRegisterPlugin: 记录服务注册日志</li>
-<li>MetricsPlugin: 统计服务调用次数和处理时间</li>
-<li>RateLimitingPlugin: 限流操作，限定服务器的TPS</li>
-</ul>
-<h3 id="客户端特性">客户端特性</h3>
-<h4 id="负载均衡">负载均衡</h4>
-<p>负载均衡是通过不同的ClientSelector来实现的。</p>
-<table>
-<thead>
-<tr>
-<th>负载均衡器</th>
-<th>功能描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DirectClientSelector</td>
-<td>点对点的直连，客户端直接连接一个服务器</td>
-</tr>
-<tr>
-<td>MultiClientSelector</td>
-<td>多对多的直连，一个客户端可以从一组固定的服务器中选择一个直连，无需注册中心</td>
-</tr>
-<tr>
-<td>ZooKeeperClientSelector</td>
-<td>从ZK注册中心选择一个服务器连接</td>
-</tr>
-<tr>
-<td>EtcdClientSelector</td>
-<td>从Etcd注册中心选择一个服务器连接</td>
-</tr>
-</tbody>
-</table>
-<p>一个Selector需要实现ClientSelector接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ClientSelector <span class="keyword">interface</span> {</div><div class="line">	Select(clientCodecFunc ClientCodecFunc) (*rpc.Client, error)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>Client的序列化方式必须和服务器的序列化方式保持一致。</p>
-<h4 id="容错">容错</h4>
-<p>Client提供了两种容错方式: <code>Failfast</code>、<code>Failover</code>、<code>Failtry</code>:</p>
-<ul>
-<li>Failfast: 如果Client调用失败，立即返回，不会重试</li>
-<li>Failover: 如果Client调用失败，会尝试从服务列表中选择另外一个服务器调用，直到成功或者到达重试次数</li>
-<li>Failtry： 如果Client调用失败，会继续这个服务器重试，直到成功或者到达重试次数</li>
-</ul>
-<h4 id="重选算法">重选算法</h4>
-<p>对于多个服务器，重选发送支持：</p>
-<ul>
-<li>随机选择： 随机选择一个服务器并返回，可能和上一次的重复</li>
-<li>RoundRobin: 按顺序选择一个服务器</li>
-<li>一致性哈希 [TODO]:使用<a href="https://arxiv.org/ftp/arxiv/papers/1406/1406.2294.pdf" target="_blank" rel="external">Jump Consistent Hash algorithm</a></li>
-<li>CallLeast [TODO]: 根据调用次数选择压力最小的服务器</li>
-</ul>
-<h4 id="扩展点-1">扩展点</h4>
-<p>Client的扩展点如下：</p>
-<ul>
-<li>读取Response Header的前后</li>
-<li>读取Response Body的前后</li>
-<li>写Request的前后</li>
-</ul>
-<h2 id="RPCX例子">RPCX例子</h2>
-<h3 id="点对点">点对点</h3>
-<p>点对点的实现和Go net/rpc的使用基本一致。</p>
-<h4 id="Server">Server</h4>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"github.com/smallnest/rpcx"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Arith <span class="typename">int</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith) Mul(args *Args, reply *Reply) error {</div><div class="line">	reply.C = args.A * args.B</div><div class="line">	<span class="keyword">return</span> <span class="constant">nil</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith) Error(args *Args, reply *Reply) error {</div><div class="line">	<span class="built_in">panic</span>(<span class="string">"ERROR"</span>)</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	server := rpcx.NewServer()</div><div class="line">	server.RegisterName(<span class="string">"Arith"</span>, <span class="built_in">new</span>(Arith))</div><div class="line">	server.Serve(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:8972"</span>)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h4 id="Client">Client</h4>
-<p>同步方式：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line"></div><div class="line">	<span class="string">"github.com/smallnest/rpcx"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	s := &rpcx.DirectClientSelector{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8972"</span>, Timeout:<span class="number"> 10</span> * time.Second}</div><div class="line">	client := rpcx.NewClient(s)</div><div class="line"></div><div class="line">	args := &Args<span class="number">{7</span>,<span class="number"> 8</span>}</div><div class="line">	<span class="keyword">var</span> reply Reply</div><div class="line">	err := client.Call(<span class="string">"Arith.Mul"</span>, args, &reply)</div><div class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">		fmt.Printf(<span class="string">"error for Arith: %d*%d, %v \n"</span>, args.A, args.B, err)</div><div class="line">	} <span class="keyword">else</span> {</div><div class="line">		fmt.Printf(<span class="string">"Arith: %d*%d=%d \n"</span>, args.A, args.B, reply.C)</div><div class="line">	}</div><div class="line"></div><div class="line">	client.Close()</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>异步方式(通过Channel获得执行结果):</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line"></div><div class="line">	<span class="string">"github.com/smallnest/rpcx"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	s := &rpcx.DirectClientSelector{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8972"</span>, Timeout:<span class="number"> 10</span> * time.Second}</div><div class="line">	client := rpcx.NewClient(s)</div><div class="line"></div><div class="line">	args := &Args<span class="number">{7</span>,<span class="number"> 8</span>}</div><div class="line">	<span class="keyword">var</span> reply Reply</div><div class="line">	divCall := client.Go(<span class="string">"Arith.Mul"</span>, args, &reply, <span class="constant">nil</span>)</div><div class="line">	replyCall := &lt;-divCall.Done <span class="comment">// will be equal to divCall</span></div><div class="line">	<span class="keyword">if</span> replyCall.Error != <span class="constant">nil</span> {</div><div class="line">		fmt.Printf(<span class="string">"error for Arith: %d*%d, %v \n"</span>, args.A, args.B, replyCall.Error)</div><div class="line">	} <span class="keyword">else</span> {</div><div class="line">		fmt.Printf(<span class="string">"Arith: %d*%d=%d \n"</span>, args.A, args.B, reply.C)</div><div class="line">	}</div><div class="line"></div><div class="line">	client.Close()</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h3 id="多服务器">多服务器</h3>
-<h4 id="Server-1">Server</h4>
-<p>这里例子启动了两个服务器，其中一个服务器故意将 <code>7 * 8</code>计算成 <code>560</code>，以便和另外一个服务器进行区分，我们可以观察计算结果。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"github.com/smallnest/rpcx"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Arith <span class="typename">int</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith) Mul(args *Args, reply *Reply) error {</div><div class="line">	reply.C = args.A * args.B</div><div class="line">	<span class="keyword">return</span> <span class="constant">nil</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith) Error(args *Args, reply *Reply) error {</div><div class="line">	<span class="built_in">panic</span>(<span class="string">"ERROR"</span>)</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Arith2 <span class="typename">int</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith2) Mul(args *Args, reply *Reply) error {</div><div class="line">	reply.C = args.A * args.B *<span class="number"> 10</span></div><div class="line">	<span class="keyword">return</span> <span class="constant">nil</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> (t *Arith2) Error(args *Args, reply *Reply) error {</div><div class="line">	<span class="built_in">panic</span>(<span class="string">"ERROR"</span>)</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	server1 := rpcx.NewServer()</div><div class="line">	server1.RegisterName(<span class="string">"Arith"</span>, <span class="built_in">new</span>(Arith))</div><div class="line">	server1.Start(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:8972"</span>)</div><div class="line"></div><div class="line">	server2 := rpcx.NewServer()</div><div class="line">	server2.RegisterName(<span class="string">"Arith"</span>, <span class="built_in">new</span>(Arith2))</div><div class="line">	server2.Serve(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:8973"</span>)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h4 id="Client-1">Client</h4>
-<p><strong>随机选取服务器的例子</strong>:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line"></div><div class="line">	<span class="string">"github.com/smallnest/rpcx"</span></div><div class="line">	<span class="string">"github.com/smallnest/rpcx/clientselector"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	server1 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8972"</span>}</div><div class="line">	server2 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8973"</span>}</div><div class="line"></div><div class="line">	servers := []clientselector.ServerPair{server1, server2}</div><div class="line"></div><div class="line">	s := clientselector.NewMultiClientSelector(servers, rpcx.RandomSelect,<span class="number"> 10</span>*time.Second)</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 10</span>; i++ {</div><div class="line">		callServer(s)</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> callServer(s rpcx.ClientSelector) {</div><div class="line">	client := rpcx.NewClient(s)</div><div class="line"></div><div class="line">	args := &Args<span class="number">{7</span>,<span class="number"> 8</span>}</div><div class="line">	<span class="keyword">var</span> reply Reply</div><div class="line">	err := client.Call(<span class="string">"Arith.Mul"</span>, args, &reply)</div><div class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">		fmt.Printf(<span class="string">"error for Arith: %d*%d, %v \n"</span>, args.A, args.B, err)</div><div class="line">	} <span class="keyword">else</span> {</div><div class="line">		fmt.Printf(<span class="string">"Arith: %d*%d=%d \n"</span>, args.A, args.B, reply.C)</div><div class="line">	}</div><div class="line"></div><div class="line">	client.Close()</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p><strong>RoundRobin选取服务器的例子</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line"></div><div class="line">	<span class="string">"github.com/smallnest/rpcx"</span></div><div class="line">	<span class="string">"github.com/smallnest/rpcx/clientselector"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	server1 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8972"</span>}</div><div class="line">	server2 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8973"</span>}</div><div class="line"></div><div class="line">	servers := []clientselector.ServerPair{server1, server2}</div><div class="line"></div><div class="line">	s := clientselector.NewMultiClientSelector(servers, rpcx.RoundRobin,<span class="number"> 10</span>*time.Second)</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 10</span>; i++ {</div><div class="line">		callServer(s)</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> callServer(s rpcx.ClientSelector) {</div><div class="line">	client := rpcx.NewClient(s)</div><div class="line">	args := &Args<span class="number">{7</span>,<span class="number"> 8</span>}</div><div class="line">	<span class="keyword">var</span> reply Reply</div><div class="line">	err := client.Call(<span class="string">"Arith.Mul"</span>, args, &reply)</div><div class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">		fmt.Printf(<span class="string">"error for Arith: %d*%d, %v \n"</span>, args.A, args.B, err)</div><div class="line">	} <span class="keyword">else</span> {</div><div class="line">		fmt.Printf(<span class="string">"Arith: %d*%d=%d \n"</span>, args.A, args.B, reply.C)</div><div class="line">	}</div><div class="line"></div><div class="line">	client.Close()</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p><strong>Failover</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"time"</span></div><div class="line"></div><div class="line">	<span class="string">"github.com/smallnest/rpcx"</span></div><div class="line">	<span class="string">"github.com/smallnest/rpcx/clientselector"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> {</div><div class="line">	A <span class="typename">int</span> <span class="string">`msg:"a"`</span></div><div class="line">	B <span class="typename">int</span> <span class="string">`msg:"b"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reply <span class="keyword">struct</span> {</div><div class="line">	C <span class="typename">int</span> <span class="string">`msg:"c"`</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	server1 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8972"</span>}</div><div class="line">	server2 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8973"</span>}</div><div class="line">	server3 := clientselector.ServerPair{Network: <span class="string">"tcp"</span>, Address: <span class="string">"127.0.0.1:8974"</span>}</div><div class="line"></div><div class="line">	servers := []clientselector.ServerPair{server1, server2, server3}</div><div class="line"></div><div class="line">	s := clientselector.NewMultiClientSelector(servers, rpcx.RoundRobin,<span class="number"> 10</span>*time.Second)</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt;<span class="number"> 10</span>; i++ {</div><div class="line">		callServer(s)</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">func</span> callServer(s rpcx.ClientSelector) {</div><div class="line">	client := rpcx.NewClient(s)</div><div class="line">	client.FailMode = rpcx.Failover</div><div class="line">	args := &Args<span class="number">{7</span>,<span class="number"> 8</span>}</div><div class="line">	<span class="keyword">var</span> reply Reply</div><div class="line">	err := client.Call(<span class="string">"Arith.Mul"</span>, args, &reply)</div><div class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> {</div><div class="line">		fmt.Printf(<span class="string">"error for Arith: %d*%d, %v \n"</span>, args.A, args.B, err)</div><div class="line">	} <span class="keyword">else</span> {</div><div class="line">		fmt.Printf(<span class="string">"Arith: %d*%d=%d \n"</span>, args.A, args.B, reply.C)</div><div class="line">	}</div><div class="line"></div><div class="line">	client.Close()</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h2 id="Benchmark">Benchmark</h2>
-<p>rpcx基于Go net/rpc框架实现，它的插件机制并不会带来多少性能的损失，如下面的测试，rpcx性能和官方的Go net/rpc持平。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root<span class="variable">@localhost</span> rpcx]<span class="comment"># go test -bench . -test.benchmem</span></div><div class="line"><span class="constant">PASS</span></div><div class="line"><span class="constant">BenchmarkNetRPC_gob</span>-<span class="number">16</span>            <span class="number">100000</span>             <span class="number">18742</span> ns/op             <span class="number">321</span> <span class="constant">B</span>/op          <span class="number">9</span> allocs/op</div><div class="line"><span class="constant">BenchmarkNetRPC_jsonrpc</span>-<span class="number">16</span>        <span class="number">100000</span>             <span class="number">21360</span> ns/op            <span class="number">1170</span> <span class="constant">B</span>/op         <span class="number">31</span> allocs/op</div><div class="line"><span class="constant">BenchmarkNetRPC_msgp</span>-<span class="number">16</span>           <span class="number">100000</span>             <span class="number">18617</span> ns/op             <span class="number">776</span> <span class="constant">B</span>/op         <span class="number">35</span> allocs/op</div><div class="line"><span class="constant">BenchmarkRPCX_gob</span>-<span class="number">16</span>              <span class="number">100000</span>             <span class="number">18718</span> ns/op             <span class="number">320</span> <span class="constant">B</span>/op          <span class="number">9</span> allocs/op</div><div class="line"><span class="constant">BenchmarkRPCX_json</span>-<span class="number">16</span>             <span class="number">100000</span>             <span class="number">21238</span> ns/op            <span class="number">1170</span> <span class="constant">B</span>/op         <span class="number">31</span> allocs/op</div><div class="line"><span class="constant">BenchmarkRPCX_msgp</span>-<span class="number">16</span>             <span class="number">100000</span>             <span class="number">18635</span> ns/op             <span class="number">776</span> <span class="constant">B</span>/op         <span class="number">35</span> allocs/op</div><div class="line"><span class="constant">BenchmarkRPCX_gencodec</span>-<span class="number">16</span>         <span class="number">100000</span>             <span class="number">18454</span> ns/op            <span class="number">4485</span> <span class="constant">B</span>/op         <span class="number">17</span> allocs/op</div><div class="line"><span class="constant">BenchmarkRPCX_protobuf</span>-<span class="number">16</span>         <span class="number">100000</span>             <span class="number">17234</span> ns/op             <span class="number">733</span> <span class="constant">B</span>/op         <span class="number">13</span> allocs/op</div></pre></td></tr></table></figure>
-
-<h2 id="参考文档">参考文档</h2>
-<ol>
-<li><a href="https://www.zhihu.com/question/25536695" target="_blank" rel="external">谁能用通俗的语言解释一下什么是RPC框架？</a></li>
-<li><a href="http://dubbo.io/" target="_blank" rel="external">DUBBO</a></li>
-<li><a href="http://weibo.com/ttarticle/p/show?id=2309403951077522312320" target="_blank" rel="external">支撑微博千亿调用的轻量级RPC框架：Motan</a></li>
-<li><a href="http://blog.jobbole.com/92290/" target="_blank" rel="external">你应该知道的 RPC 原理</a></li>
-<li><a href="http://www.infoq.com/cn/news/2014/05/twitter-finagle-intro" target="_blank" rel="external">Twitter的RPC框架Finagle简介</a></li>
-<li><a href="https://github.com/line/armeria" target="_blank" rel="external">armeria: Netty的作者正在开发的一个RPC库</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Remote_procedure_call" target="_blank" rel="external">wikipedia RPC</a></li>
-</ol>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>rpcx是一个类似阿里巴巴 <a href="http://dubbo.io/" target="_blank" rel="external">Dubbo</a> 和微博 <a href="https://github.com/weibocom/motan" target="_blank" rel="external">Motan</a> 的分布式的RPC服务框架，基于Golang net/rpc实现。 </p>
-<p>谈起分布式的RPC框架，比较出名的是阿里巴巴的dubbo,包括由当当网维护的dubbox。<br>不知道dubbo在阿里的内部竞争中败给了HSF，还是阿里有意将其闭源了，官方的代码使用的spring还停留在2.5.6.SEC03的版本，dubbox的spring也只升级到3.2.9.RELEASE。<br>不管怎样，dubbo还是在电商企业得到广泛的应用，京东也有部分在使用dubbo开发。</p>
-<blockquote>
-<p>DUBBO是一个分布式服务框架，致力于提供高性能和透明化的RPC远程服务调用方案，是阿里巴巴SOA服务化治理方案的核心框架，每天为2,000+个服务提供3,000,000,000+次访问量支持，并被广泛应用于阿里巴巴集团的各成员站点。<br>微博的RPC框架 Motan 也正式开源了，如张雷所说：</p>
-<p>2013 年微博 RPC 框架 Motan 在前辈大师们（福林、fishermen、小麦、王喆等）的精心设计和辛勤工作中诞生，向各位大师们致敬，也得到了微博各个技术团队的鼎力支持及不断完善，如今 Motan 在微博平台中已经广泛应用，每天为数百个服务完成近千亿次的调用。</p>
-</blockquote>
-<p>这两个个优秀的框架都是使用Java开发的，国外的互联网企业也有非常出名的的RPC框架如<a href="https://thrift.apache.org/" target="_blank" rel="external">thrift</a>、<a href="https://github.com/twitter/finagle" target="_blank" rel="external">finagle</a>。</p>
-<p>本项目<a href="https://github.com/smallnest/rpcx" target="_blank" rel="external">rpcx</a>的目标就是实现一个Go生态圈的Dubbo，为Go生态圈提供一个分布式的、多插件的、带有服务治理功能的产品级的RPC框架。</p>
-<p>Go生态圈已经有一些RPC库，如官方的<a href="https://golang.org/pkg/net/rpc/" target="_blank" rel="external">net/rpc</a>、<a href="https://github.com/grpc/grpc-go" target="_blank" rel="external">grpc-go</a>、<a href="http://www.gorillatoolkit.org/pkg/rpc" target="_blank" rel="external">gorilla-rpc</a>等，为什么还要开发<strong>rpcx</strong>呢？</p>
-<p>原因在于尽管这些框架都是为Go实现的RPC库，但是它们的功能比较单一，只是实现了点对点(End-to-End)的通讯框架。缺乏服务治理的功能，比如服务注册和发现、<br>负载均衡、容灾、服务监控等功能。因此我基于Go net/rpc框架实现了一个类似Dubbo的分布式框架。</p>
-<p>和rpcx比较类似的Go RPC框架是<a href="https://github.com/micro/go-micro" target="_blank" rel="external">go-micro</a>，但是rpcx提供了更丰富的功能，基于TCP的通讯协议性能更好。</p>
-]]>
-    
-    </summary>
-    
-      <category term="RPC" scheme="http://colobu.com/tags/RPC/"/>
-    
-      <category term="Go" scheme="http://colobu.com/categories/Go/"/>
     
   </entry>
   

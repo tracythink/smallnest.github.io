@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/09/dive-into-go-13/</loc>
+    <lastmod>2016-07-11T06:46:34.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/04/01/how-to-get-goroutine-id/</loc>
     <lastmod>2016-07-08T09:07:08.000Z</lastmod>
   </url>
@@ -172,7 +177,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -257,12 +262,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/some-REST-best-practices/</loc>
+    <loc>http://colobu.com/documents/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
+    <loc>http://colobu.com/2015/08/10/some-REST-best-practices/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -292,12 +297,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/09/09/set-null-for-a-string-property-by-Value/</loc>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/documents/index.html</loc>
+    <loc>http://colobu.com/2015/09/09/set-null-for-a-string-property-by-Value/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -497,12 +502,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/12/kafka-in-practice/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <loc>http://colobu.com/2015/03/12/kafka-in-practice/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,17 +527,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/04/12/context-switching-monitor/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -677,7 +677,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -833,6 +833,11 @@
   
   <url>
     <loc>http://colobu.com/2015/11/20/java8-tutorial/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
