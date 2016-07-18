@@ -2,13 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://colobu.com/2016/07/13/gos-march-to-low-latency-gc/</loc>
-    <lastmod>2016-07-13T08:13:49.000Z</lastmod>
+    <loc>http://colobu.com/2016/07/14/Java-Fiber-Quasar/</loc>
+    <lastmod>2016-07-15T08:40:51.000Z</lastmod>
   </url>
   
   <url>
     <loc>http://colobu.com/2016/07/13/Setup-Nginx-and-RTMP-module/</loc>
-    <lastmod>2016-07-13T08:12:18.000Z</lastmod>
+    <lastmod>2016-07-14T06:32:26.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/07/13/gos-march-to-low-latency-gc/</loc>
+    <lastmod>2016-07-13T08:13:49.000Z</lastmod>
   </url>
   
   <url>
@@ -107,7 +112,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/02/go-socket-programming-TCP/</loc>
+    <loc>http://colobu.com/2015/11/05/full-cheatsheet-machine-learning-algorithms/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -187,7 +192,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -257,12 +262,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/10/spark-monitoring/</loc>
+    <loc>http://colobu.com/documents/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
+    <loc>http://colobu.com/2014/12/10/spark-monitoring/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -292,12 +297,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/15/simple-online-recommendation-system-based-on-ALS-algorithm/</loc>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/documents/index.html</loc>
+    <loc>http://colobu.com/2015/01/15/simple-online-recommendation-system-based-on-ALS-algorithm/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -497,12 +502,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/05/kafka-spark-streaming-integration-summary/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <loc>http://colobu.com/2015/01/05/kafka-spark-streaming-integration-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -522,17 +527,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/13/kafka-example-in-scala/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/04/12/context-switching-monitor/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
+    <loc>http://colobu.com/2015/03/13/kafka-example-in-scala/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -682,12 +682,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
+    <loc>http://colobu.com/2014/12/02/go-socket-programming-TCP/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/11/05/full-cheatsheet-machine-learning-algorithms/</loc>
+    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -848,6 +848,11 @@
   
   <url>
     <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
