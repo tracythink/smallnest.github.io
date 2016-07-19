@@ -176,7 +176,7 @@
 <p>将系统A改成异步，然后使用HttpUrlConnection线程池行不行？<br>HttpUrlConnection线程池还是导致和B、C、D通讯的吞吐率下降，但是Go这种方案和B、C、D通讯的吞吐率可以维持一个较高的水平。</p>
 </blockquote>
 <p>考虑到Go的优势，那么能不能在Java中使用类似Go的这种goroutine模型呢？那就是本文要介绍的Java纤程库: ［Quasar](<a href="http://docs.paralleluniverse.co/quasar/)。" target="_blank" rel="external">http://docs.paralleluniverse.co/quasar/)。</a></p>
-<p>实际测试结果标明Go和Netty都是两种比较好的解决方案，不好的地方正如前面所讲，我们需要将代码改成异步的处理。 不要在Netty的Handler里面处理业务逻辑，而是将返回Response交给另外的线程池去处理。</p>
+<p>实际测试结果标明Go和Netty都是两种比较好的解决方案，不好的地方正如前面所讲，我们需要将代码改成异步的处理。线程池中的业务单元用Netty发送完Request之后，不要等待Response, Response的处理交给另外的线程来处理，同时注意不要在Netty的Handler里面处理业务逻辑。</p>
 <h3 id="quasar初步">quasar初步</h3>
 <p>以下介绍Java的另一个解决方案，也就是Java中的coroutine库。</p>
 <p>Java官方并没有纤程库。但是伟大的社区提供了一个优秀的库，它就是Quasar。</p>
