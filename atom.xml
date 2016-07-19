@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-18T01:28:23.640Z</updated>
+  <updated>2016-07-19T10:18:56.707Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://colobu.com/2016/07/14/Java-Fiber-Quasar/"/>
     <id>http://colobu.com/2016/07/14/Java-Fiber-Quasar/</id>
     <published>2016-07-14T08:18:47.000Z</published>
-    <updated>2016-07-15T08:40:51.000Z</updated>
+    <updated>2016-07-19T10:18:31.000Z</updated>
     <content type="html"><![CDATA[<p>最近遇到的一个问题大概是微服务架构中经常会遇到的一个问题：</p>
 <p>服务 <strong>A</strong> 是我们开发的系统，它的业务需要调用 <strong>B</strong>、<strong>C</strong>、<strong>D</strong> 等多个服务，这些服务是通过http的访问提供的。 问题是 <strong>B</strong>、<strong>C</strong>、<strong>D</strong> 这些服务都是第三方提供的，不能保证它们的响应时间，快的话十几毫秒，慢的话甚至1秒多，所以这些服务的Latency比较长。幸运地是这些服务都是集群部署的，容错率和并发支持都比较高，所以不担心它们的并发性能，唯一不爽的就是就是它们的Latency太高了。</p>
 <p><img src="/2016/07/14/Java-Fiber-Quasar/system.png" alt="简化的微服务架构"></p>
@@ -33,7 +33,7 @@
 <p>增加<code>http.maxConnections</code>系统属性并不能显著增加吞吐率。</p>
 <p>如果增加调用HttpUrlConnection的线程池的大小，比如增加到2000，性能会好一些，但是B、C、D的服务的延迟为500毫秒的时候，吞吐率为3800 requests/秒，延迟为1秒的时候，吞吐率为1900 requests/秒。</p>
 <p>虽然线程池的增大能带来性能的提升，但是线程池也不能无限制的增大，因为每个线程都会占用一定的资源，而且随着线程的增多，线程之间的切换也更加的频繁，对CPU等资源也是一种浪费。</p>
-<p>切换成其它http的实现，比如netty，也无法带来更好的性能。系统A 严重依赖Http协议，而Http协议又是一个 blocking 协议，只有等到Response返回才可以发送下一个请求(虽然有些http server支持http pipelining,但是我们无法保证/控制第三方的B、C、D支持这个特性)。</p>
+<p>切换成netty(channel pool)，与B、C、D通讯的性能还不错， latency为500ms的时候吞吐率能达到10000 requests/秒，通讯不成问题，问题是需要将业务代码改成异步的方式，异步地接收到这些response后在一个线程池中处理这些消息。</p>
 <p>下面列出了一些常用的http client:</p>
 <ul>
 <li>JDK’s <a href="http://docs.oracle.com/javase/8/docs/api/java/net/URLConnection.html" target="_blank" rel="external">URLConnection</a> uses traditional thread-blocking I/O.</li>

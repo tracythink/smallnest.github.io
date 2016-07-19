@@ -148,7 +148,7 @@
 <p>增加<code>http.maxConnections</code>系统属性并不能显著增加吞吐率。</p>
 <p>如果增加调用HttpUrlConnection的线程池的大小，比如增加到2000，性能会好一些，但是B、C、D的服务的延迟为500毫秒的时候，吞吐率为3800 requests/秒，延迟为1秒的时候，吞吐率为1900 requests/秒。</p>
 <p>虽然线程池的增大能带来性能的提升，但是线程池也不能无限制的增大，因为每个线程都会占用一定的资源，而且随着线程的增多，线程之间的切换也更加的频繁，对CPU等资源也是一种浪费。</p>
-<p>切换成其它http的实现，比如netty，也无法带来更好的性能。系统A 严重依赖Http协议，而Http协议又是一个 blocking 协议，只有等到Response返回才可以发送下一个请求(虽然有些http server支持http pipelining,但是我们无法保证/控制第三方的B、C、D支持这个特性)。</p>
+<p>切换成netty(channel pool)，与B、C、D通讯的性能还不错， latency为500ms的时候吞吐率能达到10000 requests/秒，通讯不成问题，问题是需要将业务代码改成异步的方式，异步地接收到这些response后在一个线程池中处理这些消息。</p>
 <p>下面列出了一些常用的http client:</p>
 <ul>
 <li>JDK’s <a href="http://docs.oracle.com/javase/8/docs/api/java/net/URLConnection.html" target="_blank" rel="external">URLConnection</a> uses traditional thread-blocking I/O.</li>
