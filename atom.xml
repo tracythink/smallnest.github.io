@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-19T10:47:17.674Z</updated>
+  <updated>2016-07-20T02:39:26.815Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://colobu.com/2016/07/14/Java-Fiber-Quasar/"/>
     <id>http://colobu.com/2016/07/14/Java-Fiber-Quasar/</id>
     <published>2016-07-14T08:18:47.000Z</published>
-    <updated>2016-07-19T10:47:10.000Z</updated>
+    <updated>2016-07-20T02:39:14.000Z</updated>
     <content type="html"><![CDATA[<p>最近遇到的一个问题大概是微服务架构中经常会遇到的一个问题：</p>
 <p>服务 <strong>A</strong> 是我们开发的系统，它的业务需要调用 <strong>B</strong>、<strong>C</strong>、<strong>D</strong> 等多个服务，这些服务是通过http的访问提供的。 问题是 <strong>B</strong>、<strong>C</strong>、<strong>D</strong> 这些服务都是第三方提供的，不能保证它们的响应时间，快的话十几毫秒，慢的话甚至1秒多，所以这些服务的Latency比较长。幸运地是这些服务都是集群部署的，容错率和并发支持都比较高，所以不担心它们的并发性能，唯一不爽的就是就是它们的Latency太高了。</p>
 <p><img src="/2016/07/14/Java-Fiber-Quasar/system.png" alt="简化的微服务架构"></p>
@@ -166,6 +166,9 @@
 <p>甚至提供了<code>Retrofit</code>、<code>OkHttp</code>的实现。</p>
 <p>经过测试，虽然随着系统B、C、D的响应时间的拉长，吞吐率有所降低，但是在latency为100毫秒的时候吞吐率依然能达到9900 requests/秒，可以满足我们的需求，而我们的代码改动的比较小。</p>
 <p>综上所述，如果想彻底改造系统A,则可以使用Go库重写，或者使用Netty + Rx的方式去处理，都能达到比较好的效果。如果想改动比较小，可以考虑使用quasar替换线程对代码进行维护。</p>
+<blockquote>
+<p>我希望本文不要给读者造成误解，以为Java NIO／Selector这种方式不能解决本文的问题，也就是第三方阻塞的问题。 事实上Java NIO也正是适合解决这样的问题， 比如Netty性能就不错，但是你需要小心的是， 不要让你的这个client对外又变成阻塞的方式，而是程序应该异步的去发送request和处理response。当然本文重点不是介绍这种实现，而是介绍Java的线程库，它可以改造传统的代码，即使有阻塞，也只是阻塞Fiber，而不是阻塞线程，这是另一个解决问题的思路。</p>
+</blockquote>
 <h3 id="参考文档">参考文档</h3>
 <ul>
 <li><a href="http://docs.paralleluniverse.co/quasar/" target="_blank" rel="external">http://docs.paralleluniverse.co/quasar/</a></li>
