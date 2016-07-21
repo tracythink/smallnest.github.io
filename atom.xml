@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-20T02:39:26.815Z</updated>
+  <updated>2016-07-21T01:53:35.166Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -2542,7 +2542,7 @@ Precedence    Operator
     <link href="http://colobu.com/2016/06/16/dive-into-go-3/"/>
     <id>http://colobu.com/2016/06/16/dive-into-go-3/</id>
     <published>2016-06-16T05:24:22.000Z</published>
-    <updated>2016-07-07T08:19:33.000Z</updated>
+    <updated>2016-07-21T01:53:10.000Z</updated>
     <content type="html"><![CDATA[<p>本文介绍Go的类型系统,以及类型的比较和语句块。</p>
 <p>Go语言包含11种类型，你应该很熟悉了，下面让我们再深入的了解一下每种类型的细节。</p>
 <ul>
@@ -2753,7 +2753,7 @@ Precedence    Operator
 <p>3、当两个slice有重叠时，可能会有影响</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">a := [...]<span class="typename">int</span><span class="number">{1</span>,<span class="number"> 2</span>,<span class="number"> 3</span>,<span class="number"> 4</span>,<span class="number"> 5</span>}</div><div class="line">s1 := a<span class="number">[0</span><span class="number">:1</span>]</div><div class="line">s2 := a<span class="number">[0</span><span class="number">:2</span>]</div><div class="line"></div><div class="line">s1 = <span class="built_in">append</span>(s1,<span class="number"> 100</span>)</div><div class="line"></div><div class="line">fmt.Printf(<span class="string">"a: %#v\ns1:%#v\ns2:%#v\n"</span>, a, s1, s2)</div></pre></td></tr></table></figure>
 
-<p>这个例子s1和s2都使用相同的数组a,而且它们的容量都是5，不同的是它们的长度分别是2和3。</p>
+<p>这个例子s1和s2都使用相同的数组a,而且它们的容量都是5，不同的是它们的长度分别是1和2。</p>
 <p>当往s1增加增加一个元素的时候，它事实上将元素放在的数组的索引为2的位置。这会对原始数组和s2都有影响，<br>看到检查输出的结果：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">a</span>: <span class="attr_selector">[5]</span><span class="tag">int</span><span class="rules">{<span class="rule">1, 100, 3, 4, 5}</span></span></div><div class="line"><span class="tag">s1</span>:<span class="attr_selector">[]</span><span class="tag">int</span><span class="rules">{<span class="rule">1, 100}</span></span></div><div class="line"><span class="tag">s2</span>:<span class="attr_selector">[]</span><span class="tag">int</span><span class="rules">{<span class="rule">1, 100}</span></span></div></pre></td></tr></table></figure>
 

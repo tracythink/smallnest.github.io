@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
+    <lastmod>2016-07-21T01:53:10.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/14/Java-Fiber-Quasar/</loc>
     <lastmod>2016-07-20T02:39:14.000Z</lastmod>
   </url>
@@ -29,11 +34,6 @@
   <url>
     <loc>http://colobu.com/2016/04/01/how-to-get-goroutine-id/</loc>
     <lastmod>2016-07-08T09:07:08.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
-    <lastmod>2016-07-07T08:19:33.000Z</lastmod>
   </url>
   
   <url>
