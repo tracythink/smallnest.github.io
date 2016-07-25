@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</loc>
+    <lastmod>2016-07-25T01:22:50.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/06/27/dive-into-go-8/</loc>
+    <lastmod>2016-07-25T01:15:30.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/07/22/using-go-disruptor/</loc>
+    <lastmod>2016-07-22T09:42:14.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/06/16/dive-into-go-3/</loc>
     <lastmod>2016-07-21T01:53:10.000Z</lastmod>
   </url>
@@ -19,11 +34,6 @@
   <url>
     <loc>http://colobu.com/2016/07/13/gos-march-to-low-latency-gc/</loc>
     <lastmod>2016-07-13T08:13:49.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2016/06/27/dive-into-go-8/</loc>
-    <lastmod>2016-07-12T03:47:57.000Z</lastmod>
   </url>
   
   <url>
@@ -102,11 +112,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</loc>
-    <lastmod>2016-07-04T07:57:15.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2016/07/02/bloom-filter-for-scala/</loc>
     <lastmod>2016-07-04T02:03:17.000Z</lastmod>
   </url>
@@ -167,7 +172,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/documents/index.html</loc>
+    <loc>http://colobu.com/about/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -217,12 +222,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/11/spark-sql-quick-start/</loc>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/about/index.html</loc>
+    <loc>http://colobu.com/2014/12/11/spark-sql-quick-start/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -272,12 +277,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/15/simple-online-recommendation-system-based-on-ALS-algorithm/</loc>
+    <loc>http://colobu.com/documents/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
+    <loc>http://colobu.com/2015/01/15/simple-online-recommendation-system-based-on-ALS-algorithm/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -322,12 +327,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/11/13/rate-limiting/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-summary/</loc>
+    <loc>http://colobu.com/2014/11/13/rate-limiting/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -362,12 +367,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/18/one-issue-caused-by-linux-retransmission/</loc>
+    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/16/zookeeper-recipes-by-example-9/</loc>
+    <loc>http://colobu.com/2014/09/18/one-issue-caused-by-linux-retransmission/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -512,12 +517,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/12/kafka-in-practice/</loc>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-7/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-7/</loc>
+    <loc>http://colobu.com/2015/03/12/kafka-in-practice/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -533,11 +538,6 @@
   
   <url>
     <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -687,7 +687,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <loc>http://colobu.com/2014/10/13/javascript-function-and-unary-operators/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -853,6 +853,11 @@
   
   <url>
     <loc>http://colobu.com/2015/08/10/java-string-deduplication/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
