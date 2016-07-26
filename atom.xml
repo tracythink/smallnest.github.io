@@ -4,7 +4,7 @@
   <subtitle><![CDATA[大道至简 Simplicity is the ultimate form of sophistication]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://colobu.com/"/>
-  <updated>2016-07-25T01:26:58.070Z</updated>
+  <updated>2016-07-26T06:05:31.921Z</updated>
   <id>http://colobu.com/</id>
   
   <author>
@@ -13,6 +13,134 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[理解RxJava的线程模型]]></title>
+    <link href="http://colobu.com/2016/07/25/understanding-rxjava-thread-model/"/>
+    <id>http://colobu.com/2016/07/25/understanding-rxjava-thread-model/</id>
+    <published>2016-07-25T09:03:53.000Z</published>
+    <updated>2016-07-26T06:00:26.000Z</updated>
+    <content type="html"><![CDATA[<p>ReactiveX是Reactive Extensions的缩写，一般简写为Rx，最初是LINQ的一个扩展，由微软的架构师Erik Meijer领导的团队开发，在2012年11月开源，Rx是一个编程模型，目标是提供一致的编程接口，帮助开发者更方便的处理异步数据流，Rx库支持.NET、JavaScript和C++，Rx近几年越来越流行了，现在已经支持几乎全部的流行编程语言了，Rx的大部分语言库由ReactiveX这个组织负责维护，比较流行的有RxJava/RxJS/Rx.NET，社区网站是 <a href="http://reactivex.io" target="_blank" rel="external">reactivex.io</a>。</p>
+<p>Netflix参考微软的Reactive Extensions创建了Java的实现RxJava，主要是为了简化服务器端的并发。2013年二月份,Ben Christensen 和 Jafar Husain发在Netflix技术博客的一篇文章第一次向世界展示了RxJava。</p>
+<p>RxJava也在Android开发中得到广泛的应用。</p>
+<blockquote>
+<p>ReactiveX<br>An API for asynchronous programming with observable streams.<br>A combination of the best ideas from the Observer pattern, the Iterator pattern, and functional programming.</p>
+</blockquote>
+<p>虽然RxJava是为异步编程实现的库，但是如果不清楚它的使用，或者错误地使用了它的线程调度，反而不能很好的利用它的异步编程提到系统的处理速度。本文通过实例演示错误的RxJava的使用，解释RxJava的线程调度模型，主要介绍<code>Scheduler</code>、<code>observeOn</code>和<code>subscribeOn</code>的使用。</p>
+<a id="more"></a>
+<p>本文中的例子以并发发送http request请求为基础，通过性能检验RxJava的线程调度。</p>
+<h3 id="第一个例子，性能超好？">第一个例子，性能超好？</h3>
+<p>我们首先看第一个例子:</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRxJavaWithoutBlocking</span>(<span class="keyword">int</span> count) <span class="keyword">throws</span> Exception {</div><div class="line"></div><div class="line">    CountDownLatch finishedLatch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</div><div class="line"></div><div class="line">    <span class="keyword">long</span> t = System.nanoTime();</div><div class="line">    Observable.range(<span class="number">0</span>, count).map(i -&gt; {</div><div class="line">        <span class="comment">//System.out.println("A:" + Thread.currentThread().getName());</span></div><div class="line">        <span class="keyword">return</span> <span class="number">200</span>;</div><div class="line">    }).subscribe(statusCode -&gt; {</div><div class="line">        <span class="comment">//System.out.println("B:" + Thread.currentThread().getName());</span></div><div class="line">    }, error -&gt; {</div><div class="line"></div><div class="line">    }, () -&gt; {</div><div class="line">        finishedLatch.countDown();</div><div class="line">    });</div><div class="line"></div><div class="line">    finishedLatch.await();</div><div class="line">    t = (System.nanoTime() - t) / <span class="number">1000000</span>; <span class="comment">//ms</span></div><div class="line"></div><div class="line">    System.out.println(<span class="string">"RxJavaWithoutBlocking TPS: "</span> + count * <span class="number">1000</span> / t);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这个例子是一个基本的RxJava的使用，利用Range创建一个Observable, subscriber处理接收的数据。因为整个逻辑没有阻塞，程序运行起来很快，<br>输出结果为：</p>
+<p>RxJavaWithoutBlocking TPS: <strong>7692307</strong> 。</p>
+<h3 id="加上业务的模拟，性能超差">加上业务的模拟，性能超差</h3>
+<p>上面的例子是一个理想化的程序，没雨任何阻塞。我们模拟一下实际的应用，加上业务处理。</p>
+<p>业务逻辑是发送一个http的请求，httpserver是一个模拟器，针对每个请求有30毫秒的延迟。subscriber统计请求结果：</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRxJavaWithBlocking</span>(<span class="keyword">int</span> count) <span class="keyword">throws</span> Exception {</div><div class="line">        URL url = <span class="keyword">new</span> URL(<span class="string">"http://127.0.0.1:8999/"</span>);</div><div class="line">        CountDownLatch finishedLatch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</div><div class="line"></div><div class="line">        <span class="keyword">long</span> t = System.nanoTime();</div><div class="line">        Observable.range(<span class="number">0</span>, count).map(i -&gt; {</div><div class="line">            <span class="keyword">try</span> {</div><div class="line">                HttpURLConnection conn = (HttpURLConnection) url.openConnection();</div><div class="line">                conn.setRequestMethod(<span class="string">"GET"</span>);</div><div class="line">                <span class="keyword">int</span> responseCode = conn.getResponseCode();</div><div class="line"></div><div class="line">                BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</div><div class="line">                String inputLine;</div><div class="line">                <span class="keyword">while</span> ((inputLine = in.readLine()) != <span class="keyword">null</span>) {</div><div class="line">                    <span class="comment">//response.append(inputLine);</span></div><div class="line">                }</div><div class="line">                in.close();</div><div class="line"></div><div class="line"></div><div class="line">                <span class="keyword">return</span> responseCode;</div><div class="line">            } <span class="keyword">catch</span> (Exception ex) {</div><div class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">            }</div><div class="line"></div><div class="line">        }).subscribe(statusCode -&gt; {</div><div class="line">        }, error -&gt; {</div><div class="line"></div><div class="line">        }, () -&gt; {</div><div class="line">            finishedLatch.countDown();</div><div class="line">        });</div><div class="line"></div><div class="line">        finishedLatch.await();</div><div class="line">        t = (System.nanoTime() - t) / <span class="number">1000000</span>; <span class="comment">//ms</span></div><div class="line"></div><div class="line">        System.out.println(<span class="string">"RxJavaWithBlocking TPS: "</span> + count * <span class="number">1000</span> / t);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<p>RxJavaWithBlocking TPS: <strong>29</strong>。</p>
+<p>@＃¥％％……&amp;！</p>
+<p>性能怎么突降呢，第一个例子看起来性能超好啊，http server只增加了一个30毫秒的延迟，导致这个方法每秒只能处理29个请求。</p>
+<p>如果我们估算一下， 29*30= 870 毫秒，大约1秒，正好和单个线程发送处理所有的请求的TPS差不多。<br>后面我们也会看到，实际的确是一个线程处理的，你可以在代码中加入</p>
+<h3 id="加上调度器，不起作用？">加上调度器，不起作用？</h3>
+<p>如果你对<code>subscribeOn</code>和<code>observeOn</code>方法有些印象的话，可能会尝试使用调度器去解决：</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRxJavaWithBlocking</span>(<span class="keyword">int</span> count) <span class="keyword">throws</span> Exception {</div><div class="line">        URL url = <span class="keyword">new</span> URL(<span class="string">"http://127.0.0.1:8999/"</span>);</div><div class="line">        CountDownLatch finishedLatch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</div><div class="line"></div><div class="line">        <span class="keyword">long</span> t = System.nanoTime();</div><div class="line">        Observable.range(<span class="number">0</span>, count).map(i -&gt; {</div><div class="line">            <span class="keyword">try</span> {</div><div class="line">                HttpURLConnection conn = (HttpURLConnection) url.openConnection();</div><div class="line">                conn.setRequestMethod(<span class="string">"GET"</span>);</div><div class="line">                <span class="keyword">int</span> responseCode = conn.getResponseCode();</div><div class="line"></div><div class="line">                BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</div><div class="line">                String inputLine;</div><div class="line">                <span class="keyword">while</span> ((inputLine = in.readLine()) != <span class="keyword">null</span>) {</div><div class="line">                    <span class="comment">//response.append(inputLine);</span></div><div class="line">                }</div><div class="line">                in.close();</div><div class="line"></div><div class="line"></div><div class="line">                <span class="keyword">return</span> responseCode;</div><div class="line">            } <span class="keyword">catch</span> (Exception ex) {</div><div class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">            }</div><div class="line"></div><div class="line">        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation()).subscribe(statusCode -&gt; {</div><div class="line">        }, error -&gt; {</div><div class="line"></div><div class="line">        }, () -&gt; {</div><div class="line">            finishedLatch.countDown();</div><div class="line">        });</div><div class="line"></div><div class="line">        finishedLatch.await();</div><div class="line">        t = (System.nanoTime() - t) / <span class="number">1000000</span>; <span class="comment">//ms</span></div><div class="line"></div><div class="line">        System.out.println(<span class="string">"RxJavaWithBlocking TPS: "</span> + count * <span class="number">1000</span> / t);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>加上<code>.subscribeOn(Schedulers.io()).observeOn(Schedulers.computation())</code>看一下性能：</p>
+<p>RxJavaWithBlocking TPS: <strong>30</strong>。</p>
+<p>性能没有改观，是时候了解一下RxJava线程调度的问题了。</p>
+<h3 id="RxJava的线程模型">RxJava的线程模型</h3>
+<p>首先，依照<a href="http://reactivex.io/documentation/contract.html" target="_blank" rel="external">Observable Contract</a>, <code>onNext</code>是顺序执行的，不会同时由多个线程并发执行。<br><img src="no_observeon.gif" alt="图片来自 http://tomstechnicalblog.blogspot.com/2016/02/rxjava-understanding-observeon-and.html"></p>
+<p>默认情况下，它是在调用<code>subscribe</code>方法的那个线程中执行的。如第一个例子和第二个例子，Rx的操作和消息接收处理都是在同一个线程中执行的。一旦由阻塞，比如第二个例子，久会导致这个线程被阻塞，吞吐量下降。<br><img src="1.png" alt="图片来自 https://medium.com/@diolor/observe-in-the-correct-thread-1939bb9bb9d2"></p>
+<p>但是<code>subscribeOn</code>可以改变Observable的运行线程。<br><img src="2.png" alt="图片来自 https://medium.com/@diolor/observe-in-the-correct-thread-1939bb9bb9d2"><br>上图中可以看到，如果你使用了<code>subscribeOn</code>方法，则Rx的运行将会切换到另外的线程上，而不是默认的调用线程。</p>
+<p>需要注意的是，如果在Observable链中调用了多个<code>subscribeOn</code>方法，无论调用点在哪里，Observable链只会使用第一个<code>subscribeOn</code>指定的调度器，正所谓&quot;一见倾情&quot;。<br>但是<code>onNext</code>还是顺序执行的，所以第二个例子的性能依然低下。</p>
+<p><code>observeOn</code>可以中途改变Observable链的线程。前面说了，<code>subscribeOn</code>方法改变的源Observable的整个的运行线程，要想中途切换线程，就需要<code>observeOn</code>方法。<br><img src="observeOn.gif" alt="图片来自 http://tomstechnicalblog.blogspot.com/2016/02/rxjava-understanding-observeon-and.html"></p>
+<p>官方的一个简略晦涩的解释如下：</p>
+<blockquote>
+<p>The SubscribeOn operator changes this behavior by specifying a different Scheduler on which the Observable should operate. The ObserveOn operator specifies a different Scheduler that the Observable will use to send notifications to its observers.</p>
+</blockquote>
+<p>一图胜千言：<br><img src="schedulers.png" alt="图片来自 http://reactivex.io"></p>
+<p>注意箭头的颜色和横轴的颜色，不同的颜色代表不同的线程。</p>
+<h3 id="Schedulers">Schedulers</h3>
+<p>上面我们了解了RxJava可以使用<code>subscribeOn</code>和<code>observeOn</code>可以改变和切换线程，以及<code>onNext</code>是顺序执行的，不是并发执行,至多也就切换到另外一个线程，如果它中间的操作是阻塞的，久会影响整个Rx的执行。</p>
+<p>Rx是通过调度器来选择哪个线程执行的，RxJava内置了几种调度器，分别为不同的case提供线程：</p>
+<ul>
+<li><p><strong>io()</strong> : 这个调度器时用于I/O操作, 它可以增长或缩减来确定线程池的大小它是使用CachedThreadScheduler来实现的。需要注意的是，它的线程池是无限制的，如果你使用了大量的线程的话，可能会导致OutOfMemory等资源用尽的异常。</p>
+</li>
+<li><p><strong>computation()</strong> : 这个是计算工作默认的调度器，它与I/O操作无关。它也是许多RxJava方法的默认调度器：buffer(),debounce(),delay(),interval(),sample(),skip()。</p>
+</li>
+</ul>
+<p>因为这些方法内部已经调用的调度器，所以你再调用<code>subscribeOn</code>是无效的，比如下面的例子总是使用<code>computation</code>调度器的线程。</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Observable.just(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</div><div class="line">                .delay(<span class="number">1</span>, TimeUnit.SECONDS)</div><div class="line">                .subscribeOn(Schedulers.newThread())</div><div class="line">                .map(i -&gt; {</div><div class="line">                    System.out.println(<span class="string">"map: "</span> + Thread.currentThread().getName());</div><div class="line">                    <span class="keyword">return</span> i;</div><div class="line">                })</div><div class="line">                .subscribe(i -&gt; {});</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>immediate()</strong> :这个调度器允许你立即在当前线程执行你指定的工作。它是timeout(),timeInterval(),以及timestamp()方法默认的调度器。</li>
+<li><strong>newThread()</strong> :创建一个新的线程只从。</li>
+<li><strong>trampoline()</strong> :为当前线程建立一个队列，将当前任务加入到队列中依次执行。</li>
+</ul>
+<p>同时，<code>Schedulers</code>还提供了<code>from</code>静态方法，用户可以定制线程池：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ExecutorService es = Executors.newFixedThreadPool(<span class="number">200</span>, <span class="keyword">new</span> ThreadFactoryBuilder().setNameFormat(<span class="string">"SubscribeOn-%d"</span>).build());</div><div class="line">Schedulers.from(es)</div></pre></td></tr></table></figure>
+
+<h3 id="改造，异步执行">改造，异步执行</h3>
+<p>现在，我们已经了解了RxJava的线程运行，以及相关的调度器。可以看到上面的例子还是顺序阻塞执行的，即使是切换到另外的线程上，依然是顺序阻塞执行，显示它的吞吐率非常非常的低。下一步我们就要改造这个例子，让它能异步的执行。</p>
+<p>下面是一种改造方案，我先把代码贴出来，再解释：</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRxJavaWithFlatMap</span>(<span class="keyword">int</span> count) <span class="keyword">throws</span> Exception {</div><div class="line">    ExecutorService es = Executors.newFixedThreadPool(<span class="number">200</span>, <span class="keyword">new</span> ThreadFactoryBuilder().setNameFormat(<span class="string">"SubscribeOn-%d"</span>).build());</div><div class="line"></div><div class="line">    URL url = <span class="keyword">new</span> URL(<span class="string">"http://127.0.0.1:8999/"</span>);</div><div class="line">    CountDownLatch finishedLatch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</div><div class="line"></div><div class="line">    <span class="keyword">long</span> t = System.nanoTime();</div><div class="line">    Observable.range(<span class="number">0</span>, count).subscribeOn(Schedulers.io()).flatMap(i -&gt; {</div><div class="line">                <span class="comment">//System.out.println("A: " + Thread.currentThread().getName());</span></div><div class="line">                <span class="keyword">return</span> Observable.just(i).subscribeOn(Schedulers.from(es)).map(v -&gt; {</div><div class="line">                            <span class="comment">//System.out.println("B: " + Thread.currentThread().getName());</span></div><div class="line">                            <span class="keyword">try</span> {</div><div class="line">                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();</div><div class="line">                                conn.setRequestMethod(<span class="string">"GET"</span>);</div><div class="line">                                <span class="keyword">int</span> responseCode = conn.getResponseCode();</div><div class="line"></div><div class="line">                                BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</div><div class="line">                                String inputLine;</div><div class="line">                                <span class="keyword">while</span> ((inputLine = in.readLine()) != <span class="keyword">null</span>) {</div><div class="line">                                    <span class="comment">//response.append(inputLine);</span></div><div class="line">                                }</div><div class="line">                                in.close();</div><div class="line"></div><div class="line"></div><div class="line">                                <span class="keyword">return</span> responseCode;</div><div class="line">                            } <span class="keyword">catch</span> (Exception ex) {</div><div class="line">                                <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">                            }</div><div class="line">                        }</div><div class="line">                );</div><div class="line">            }</div><div class="line"></div><div class="line">    ).observeOn(Schedulers.computation()).subscribe(statusCode -&gt; {</div><div class="line">        <span class="comment">//System.out.println("C: " + Thread.currentThread().getName());</span></div><div class="line">    }, error -&gt; {</div><div class="line"></div><div class="line">    }, () -&gt; {</div><div class="line">        finishedLatch.countDown();</div><div class="line">    });</div><div class="line"></div><div class="line">    finishedLatch.await();</div><div class="line">    t = (System.nanoTime() - t) / <span class="number">1000000</span>; <span class="comment">//ms</span></div><div class="line"></div><div class="line">    System.out.println(<span class="string">"RxJavaWithFlatMap TPS: "</span> + count * <span class="number">1000</span> / t);</div><div class="line">    es.shutdownNow();</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>通过<code>flatmap</code>可以将源Observable的元素项转成n个Observable,生成的每个Observable可以使用线程池并发的执行，同时flatmap还会将这n个Observable merge成一个Observable。你可以将其中的注释打开，看看线程的执行情况。</p>
+<p>性能还不错：</p>
+<p>RxJavaWithFlatMap TPS: <strong>3906</strong>。</p>
+<blockquote>
+<p><strong>FlatMap</strong> — transform the items emitted by an Observable into Observables, then flatten the emissions from those into a single Observable</p>
+</blockquote>
+<p><img src="flatMap.c.png" alt="图片来自 http://reactivex.io"></p>
+<h3 id="另一种解决方案">另一种解决方案</h3>
+<p>我们已经清楚了要并行执行提高吞吐率的解决办法就是创建多个Observable并且并发执行。基于这种解决方案，我们还可以有其它的解决方案。</p>
+<p>上一方案中利用flatmap创建多个Observable,针对我们的例子，我们何不直接创建多个Observable呢？</p>
+<figure class="highlight Java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRxJavaWithParallel</span>(<span class="keyword">int</span> count) <span class="keyword">throws</span> Exception {</div><div class="line">    ExecutorService es = Executors.newFixedThreadPool(<span class="number">200</span>, <span class="keyword">new</span> ThreadFactoryBuilder().setNameFormat(<span class="string">"SubscribeOn-%d"</span>).build());</div><div class="line"></div><div class="line">    URL url = <span class="keyword">new</span> URL(<span class="string">"http://127.0.0.1:8999/"</span>);</div><div class="line">    CountDownLatch finishedLatch = <span class="keyword">new</span> CountDownLatch(count);</div><div class="line"></div><div class="line">    <span class="keyword">long</span> t = System.nanoTime();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; count; k++) {</div><div class="line">        Observable.just(k).map(i -&gt; {</div><div class="line">            <span class="comment">//System.out.println("A: " + Thread.currentThread().getName());</span></div><div class="line">            <span class="keyword">try</span> {</div><div class="line">                HttpURLConnection conn = (HttpURLConnection) url.openConnection();</div><div class="line">                conn.setRequestMethod(<span class="string">"GET"</span>);</div><div class="line">                <span class="keyword">int</span> responseCode = conn.getResponseCode();</div><div class="line"></div><div class="line">                BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</div><div class="line">                String inputLine;</div><div class="line">                <span class="keyword">while</span> ((inputLine = in.readLine()) != <span class="keyword">null</span>) {</div><div class="line">                    <span class="comment">//response.append(inputLine);</span></div><div class="line">                }</div><div class="line">                in.close();</div><div class="line"></div><div class="line"></div><div class="line">                <span class="keyword">return</span> responseCode;</div><div class="line">            } <span class="keyword">catch</span> (Exception ex) {</div><div class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">            }</div><div class="line"></div><div class="line">        }).subscribeOn(Schedulers.from(es)).observeOn(Schedulers.computation()).subscribe(statusCode -&gt; {</div><div class="line">        }, error -&gt; {</div><div class="line"></div><div class="line">        }, () -&gt; {</div><div class="line">            finishedLatch.countDown();</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line"></div><div class="line">    finishedLatch.await();</div><div class="line">    t = (System.nanoTime() - t) / <span class="number">1000000</span>; <span class="comment">//ms</span></div><div class="line"></div><div class="line">    System.out.println(<span class="string">"RxJavaWithParallel TPS: "</span> + count * <span class="number">1000</span> / t);</div><div class="line">    es.shutdownNow();</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>性能更好一点：</p>
+<p>RxJavaWithParallel2 TPS: <strong>4716</strong>。</p>
+<p>这个例子没有使用<code>Schedulers.io()</code>作为它的调度器，这是因为如果在大并发的情况下，可能会出现创建过多的线程导致资源不错，所以我们限定使用200个线程。</p>
+<h3 id="总结">总结</h3>
+<ul>
+<li><strong>subscribeOn()</strong> 改变的Observable运行(operate)使用的调度器，多次调用无效。</li>
+<li><strong>observeOn()</strong> 改变Observable发送notifications的调度器，会影响后续的操作，可以多次调用</li>
+<li>默认情况下， 操作链使用的线程是调用<code>subscribe()</code>的线程</li>
+<li><code>Schedulers</code>提供了多个调度器，可以并行运行多个Observable</li>
+<li>使用RxJava可以实现异步编程，但是依然要小心线程阻塞。而且由于这种异步的编程，调试代码可能更加的困难</li>
+</ul>
+<h3 id="参考文档">参考文档</h3>
+<ol>
+<li><a href="http://reactivex.io/documentation/contract.html" target="_blank" rel="external">http://reactivex.io/documentation/contract.html</a></li>
+<li><a href="http://reactivex.io/documentation/operators/subscribeon.html" target="_blank" rel="external">http://reactivex.io/documentation/operators/subscribeon.html</a> <a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/SubscribeOn.html" target="_blank" rel="external">中文翻译</a></li>
+<li><a href="http://reactivex.io/documentation/operators/observeon.html" target="_blank" rel="external">http://reactivex.io/documentation/operators/observeon.html</a> <a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/ObserveOn.html" target="_blank" rel="external">中文翻译</a></li>
+<li><a href="http://reactivex.io/documentation/scheduler.html" target="_blank" rel="external">http://reactivex.io/documentation/scheduler.html</a></li>
+<li><a href="http://tomstechnicalblog.blogspot.com/2016/02/rxjava-understanding-observeon-and.html" target="_blank" rel="external">http://tomstechnicalblog.blogspot.com/2016/02/rxjava-understanding-observeon-and.html</a></li>
+<li><a href="http://tomstechnicalblog.blogspot.com/2015/11/rxjava-achieving-parallelization.html" target="_blank" rel="external">http://tomstechnicalblog.blogspot.com/2015/11/rxjava-achieving-parallelization.html</a></li>
+<li><a href="https://medium.com/@diolor/observe-in-the-correct-thread-1939bb9bb9d2" target="_blank" rel="external">https://medium.com/@diolor/observe-in-the-correct-thread-1939bb9bb9d2</a> <a href="http://www.jianshu.com/p/72911b9ba2d7" target="_blank" rel="external">中文翻译</a></li>
+<li><a href="https://github.com/mcxiaoke/RxDocs" target="_blank" rel="external">https://github.com/mcxiaoke/RxDocs</a></li>
+</ol>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>ReactiveX是Reactive Extensions的缩写，一般简写为Rx，最初是LINQ的一个扩展，由微软的架构师Erik Meijer领导的团队开发，在2012年11月开源，Rx是一个编程模型，目标是提供一致的编程接口，帮助开发者更方便的处理异步数据流，Rx库支持.NET、JavaScript和C++，Rx近几年越来越流行了，现在已经支持几乎全部的流行编程语言了，Rx的大部分语言库由ReactiveX这个组织负责维护，比较流行的有RxJava/RxJS/Rx.NET，社区网站是 <a href="http://reactivex.io" target="_blank" rel="external">reactivex.io</a>。</p>
+<p>Netflix参考微软的Reactive Extensions创建了Java的实现RxJava，主要是为了简化服务器端的并发。2013年二月份,Ben Christensen 和 Jafar Husain发在Netflix技术博客的一篇文章第一次向世界展示了RxJava。</p>
+<p>RxJava也在Android开发中得到广泛的应用。</p>
+<blockquote>
+<p>ReactiveX<br>An API for asynchronous programming with observable streams.<br>A combination of the best ideas from the Observer pattern, the Iterator pattern, and functional programming.</p>
+</blockquote>
+<p>虽然RxJava是为异步编程实现的库，但是如果不清楚它的使用，或者错误地使用了它的线程调度，反而不能很好的利用它的异步编程提到系统的处理速度。本文通过实例演示错误的RxJava的使用，解释RxJava的线程调度模型，主要介绍<code>Scheduler</code>、<code>observeOn</code>和<code>subscribeOn</code>的使用。</p>
+]]>
+    
+    </summary>
+    
+      <category term="rxjava" scheme="http://colobu.com/tags/rxjava/"/>
+    
+      <category term="Java" scheme="http://colobu.com/categories/Java/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[高性能的消息框架 go-disruptor]]></title>
@@ -3172,131 +3300,6 @@ Precedence    Operator
 <li>Map类型</li>
 <li>Channel类型</li>
 </ul>
-]]>
-    
-    </summary>
-    
-      <category term="Go" scheme="http://colobu.com/categories/Go/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[深入Go语言 - 2]]></title>
-    <link href="http://colobu.com/2016/06/16/dive-into-go-2/"/>
-    <id>http://colobu.com/2016/06/16/dive-into-go-2/</id>
-    <published>2016-06-16T01:40:43.000Z</published>
-    <updated>2016-07-06T05:30:00.000Z</updated>
-    <content type="html"><![CDATA[<p>本文介绍Go语言的常量和变量的语言细节。</p>
-<a id="more"></a>
-<h3 id="常量">常量</h3>
-<p>只有数值类型和字符串类型才可以作为常量。</p>
-<p>数值类型包括 布尔类型、rune类型、各种整型、浮点类型、复数。</p>
-<p>常量值既可以是数值类型的字面量，也可以是字符串字面量，以及常量的等价形式， 如：</p>
-<ol>
-<li>常量表达式， 如 <code>4 * 5</code></li>
-<li>转换结果是常量， 如 <code>int(10.0)</code></li>
-<li>内建函数的返回值， 如<code>unsafe.Sizeof</code>、<code>cap</code>、<code>len</code></li>
-<li>复数、实数和虚数的应用</li>
-<li><code>true</code>和<code>false</code>赋值给bool类型的常量</li>
-<li>内建的 <code>iota</code></li>
-</ol>
-<p>用变量赋值给常量是不允许的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> vs = <span class="string">"hello world"</span></div><div class="line"><span class="keyword">const</span> s = vs <span class="comment">//错误</span></div></pre></td></tr></table></figure>
-
-<p>常量的命名还是遵循前一篇文章的介绍，所有你看到一些&quot;奇怪&quot;的常量名不要觉得奇怪:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> π =<span class="number"> 3.1415926</span></div><div class="line"><span class="keyword">const</span> Π =<span class="number"> 3.1415926</span></div></pre></td></tr></table></figure>
-
-<p>常量可以不声明类型(untyped), 它会根据常量值设置默认的类型，默认类型为：</p>
-<ul>
-<li>bool</li>
-<li>rune</li>
-<li>int</li>
-<li>float64</li>
-<li>complex128</li>
-<li>string</li>
-</ul>
-<p>在需要类型的上下文中，常量可以<strong>隐式</strong>转换成相应的类型：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> v1 <span class="typename">int</span> = i</div><div class="line"><span class="keyword">var</span> v2 <span class="typename">float32</span> = i</div><div class="line"><span class="keyword">var</span> v3 <span class="typename">complex64</span> = i</div></pre></td></tr></table></figure>
-
-<p>注意不同类型的变量是不能转换的:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> v4 <span class="typename">float64</span> = v2</div></pre></td></tr></table></figure>
-
-<p>你不能将一个不能隐式转换成常量类型的值赋值给常量，比如下面的例子中<code>2147483648.0</code>不能赋值给int32, 溢出了:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> i2 <span class="typename">int32</span> =<span class="number"> 2147483648.0</span></div></pre></td></tr></table></figure>
-
-<p>Go对常量的底层实现有限制：</p>
-<ul>
-<li>Represent integer constants with at least 256 bits.</li>
-<li>Represent floating-point constants, including the parts of a complex constant, with a mantissa of at least 256 bits and a signed exponent of at least 32 bits.</li>
-<li>Give an error if unable to represent an integer constant precisely.</li>
-<li>Give an error if unable to represent a floating-point or complex constant due to overflow.</li>
-<li>Round to the nearest representable constant if unable to represent a floating-point or complex constant due to limits on precision.</li>
-</ul>
-<p>声明多个变量的时候可以将声明放在一起：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	i =<span class="number"> 1</span></div><div class="line">	s = <span class="string">"hello word"</span></div><div class="line">)</div></pre></td></tr></table></figure>
-
-<p>或者将多个常量的定义放在一行中:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> i1, i2, i3 =<span class="number"> 0</span>,<span class="number"> 1</span>, <span class="string">"hello world"</span></div></pre></td></tr></table></figure>
-
-<p>常量也可以定义在函数中:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> G() {</div><div class="line">  <span class="keyword">const</span> t =<span class="number"> 100</span></div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h3 id="变量">变量</h3>
-<p>变量代表一个值的存储位置，每个值都有类型。</p>
-<p>变量在声明的时候如果同时有赋值操作，那么类型可以省略，因为可以根据值推断出来：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> i1 <span class="typename">int</span> =<span class="number"> 100</span></div><div class="line"><span class="keyword">var</span> i2 =<span class="number"> 100</span></div></pre></td></tr></table></figure>
-
-<p>类似于常量定义，你可以同时声明多个变量：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> (</div><div class="line">  i3 =<span class="number"> 120</span></div><div class="line">  i4 = <span class="string">"hello world"</span></div><div class="line">)</div></pre></td></tr></table></figure>
-
-<p>或者一行声明多个变量:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> i5, i6, i7 =<span class="number"> 100</span>, <span class="string">"hello world"</span>, <span class="constant">true</span></div><div class="line"><span class="keyword">var</span> i8, i9, i10 <span class="typename">int</span></div></pre></td></tr></table></figure>
-
-<p>在上面的例子中i8、i9、i10都是 int类型,所以将类型写在最后面，下面的写法是不允许的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> i11 <span class="typename">int</span>, i12 <span class="typename">int</span>, i13 <span class="typename">int</span> <span class="comment">//错误</span></div></pre></td></tr></table></figure>
-
-<p>下面的语句也是非法的，因为声明的变量和赋值列表的数值数量必须一样：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> i14, i15, i16 =<span class="number"> 100</span>,<span class="number"> 200</span> <span class="comment">//错误</span></div><div class="line"><span class="keyword">var</span> i17, i18, i19 <span class="typename">int</span> =<span class="number"> 100</span>,<span class="number"> 200</span> <span class="comment">//错误</span></div></pre></td></tr></table></figure>
-
-<h3 id="变量声明简化">变量声明简化</h3>
-<p>如果变量在声明的时候同时初始化，那么它就可以简化。<br>比如</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> i1, i2 =<span class="number"> 100</span>, <span class="string">"hello world"</span></div></pre></td></tr></table></figure>
-
-<p>可以简化为</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">i1, i2 :=<span class="number"> 100</span>, <span class="string">"hello world"</span></div></pre></td></tr></table></figure>
-
-<p>记住，这个简写方法<strong>只能用在函数中</strong>，函数之外的变量声明不能简写，下面的写法是错误的。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line">s := <span class="string">"中国"</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>不像普通的变量声明，简写方式声明的变量可以&quot;重新声明&quot;已有变量，只要保证有一个新的变量在变量列表中即可，当然“重新声明”的变量和原有变量的类型相同。<br>看下面的例子就容易理解了：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	<span class="keyword">var</span> f *os.File</div><div class="line">	f, err := os.Open(<span class="string">"dive-into-go.pdf"</span>)</div><div class="line"></div><div class="line">	fmt.Println(f, err)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>这个例子中<code>f</code>变量重新被声明了，程序正常编译，没有错误，这是因为<code>err</code>是新的变量。<br>下面这个例子就编译不过，因为第4行没有新的变量定义。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	<span class="keyword">var</span> f *os.File</div><div class="line">	<span class="keyword">var</span> err error</div><div class="line">	f, err := os.Open(<span class="string">"dive-into-go.pdf"</span>)</div><div class="line"></div><div class="line">	fmt.Println(f, err)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>不能用简写方法赋值给一个结构体的字段(field):</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> MyFile <span class="keyword">struct</span> {</div><div class="line">	<span class="keyword">var</span> F *os.File</div><div class="line">}</div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">	<span class="keyword">var</span> mf MyFile</div><div class="line">	<span class="comment">//var err error</span></div><div class="line">	mf.F, err := os.Open(<span class="string">"dive-into-go.pdf"</span>)</div><div class="line"></div><div class="line">	fmt.Println(f, err)</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>注意，简写方法有时候会迷惑你，因为它可能<code>shadow</code>一个变量，而且正常编译通过:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">x :=<span class="number"> 100</span></div><div class="line"><span class="keyword">func</span>() {</div><div class="line">  x :=<span class="number"> 200</span></div><div class="line">  fmt.Println(x) <span class="comment">//200</span></div><div class="line">}()</div><div class="line"></div><div class="line">fmt.Println(x) <span class="comment">//100</span></div></pre></td></tr></table></figure>
-
-<p>在上面的例子中，如果本意是通过一个方法修改变量x的值为200的话，最终打印结果可能是100，因为第三行实际是声明了一个新的变量。</p>
-<p>你可以通过<code>vet</code>工具检查代码中是否包含<code>shadow</code>的代码：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">go tool vet -shadow main8.go</div></pre></td></tr></table></figure>
-
-<p>输出结果为:</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">main8</span><span class="class">.go</span><span class="pseudo">:8</span>: <span class="tag">declaration</span> <span class="tag">of</span> <span class="tag">x</span> <span class="tag">shadows</span> <span class="tag">declaration</span> <span class="tag">at</span> <span class="tag">main8</span><span class="class">.go</span><span class="pseudo">:6</span>:</div></pre></td></tr></table></figure>
-
-<p>变量和常量都可以定义在函数内或者包下，但是如果函数内的变量没有被使用，则会编译出错，这是Go语言有意这样设计的。包下的变量和常量，函数内的常量没有这个限制。</p>
-<p>参考<br>＊ <a href="http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/index.html#short_vars" target="_blank" rel="external">http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/index.html#short_vars</a></p>
-<h3 id="静态类型和动态类型">静态类型和动态类型</h3>
-<p>静态类型(static type)是变量声明的时候的声明类型，在变量声明、new方法创建对象时或者结构体(struct)的元素的类型定义，参数类型等。</p>
-<p>接口(interface)类型的变量还有一个动态类型，它是运行时赋值给这个变量的具体的值的类型(当然值为nil的时候没有动态类型)。一个变量的动态类型在运行时可能改变，<br>这主要依赖它的赋值。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> x <span class="keyword">interface</span>{}  <span class="comment">// x 为零值 nil,静态类型为 interface{}</span></div><div class="line"><span class="keyword">var</span> v *T           <span class="comment">// v 为零值 nil, 静态类型为 *T</span></div><div class="line">x =<span class="number"> 42</span>             <span class="comment">// x 的值为 42,动态类型为int, 静态类型为interface{}</span></div><div class="line">x = v              <span class="comment">// x 的值为 (*T)(nil)， 动态类型为 *T, 静态类型为 *T</span></div></pre></td></tr></table></figure>
-
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>本文介绍Go语言的常量和变量的语言细节。</p>
 ]]>
     
     </summary>
