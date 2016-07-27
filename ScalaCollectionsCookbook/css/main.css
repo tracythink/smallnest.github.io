@@ -521,3 +521,26 @@ p.hosting-offer {
 .sponsor {
     margin-top: 60px;
 }
+
+#gallery{padding-top: 10px ; padding-bottom: 10px}
+.block-top{}
+.gallery-area{text-align: center;}
+.gallery-area h1{font-size: 36px; color:#636C6C; font-family: 'Raleway', sans-serif; font-weight: 700; margin: 0px; }
+.gallery-area p{color: #AFB8B8; font-size: 16px; font-family: 'Raleway', sans-serif; font-weight: 400; margin: 0px; padding-top:24px }
+#gallery .block-bottom{text-align: center;padding-top: 50px;}
+.gallery-list{}
+.gallery-items{}
+.gallery-img{}
+.gallery-items-text{}
+.gallery-items-text p{color: #9ea5a5; font-size: 14px; margin: 0; padding-top: 45px;font-family: 'Raleway', sans-serif; font-weight: 400;}
+#gallery .owl-carousel .owl-controls{left: 0; margin-top: -40px; position: absolute; text-align: left; top: 50%;
+width: 100%;}
+#gallery .owl-carousel .owl-controls .owl-buttons{}
+#gallery .owl-carousel .owl-controls .owl-buttons div{color: #9fa9a9;font-size: 50px; display: inline-block}
+#gallery .owl-carousel .owl-controls .owl-buttons div.owl-prev{margin-left: 0px;}
+#gallery .owl-carousel .owl-controls .owl-buttons div.owl-next{position: absolute;right: 0px;}
+#gallery .owl-carousel .owl-controls .owl-buttons div i{}
+#gallery .owl-carousel .owl-controls .owl-buttons div i.fa-angle-left{}
+#gallery .owl-carousel .owl-controls .owl-buttons div i.fa-angle-right{}
+#owl-demo .item{margin: 3px; padding: 30px;}
+#owl-demo .item img{display: block;width: 420px;height: auto;}

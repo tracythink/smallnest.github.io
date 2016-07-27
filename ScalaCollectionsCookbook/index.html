@@ -48,8 +48,48 @@
             </div>
         </header>
 
-        <!-- Gallery Start
-        ============================================================= -->
+        <section id="gallery">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block-bottom">
+                            <div class="gallery-list" id="owl-demo">
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc1.jpg" alt="img">
+                                    </div>
+                                </div>
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc2.jpg" alt="img">
+                                    </div>
+                                </div>
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc3.jpg" alt="img">
+                                    </div>
+                                </div>
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc4.jpg" alt="img">
+                                    </div>
+                                </div>
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc5.jpg" alt="img">
+                                    </div>
+                                </div>
+                                <div class="gallery-items item">
+                                    <div class="gallery-img">
+                                        <img src="img/toc6.jpg" alt="img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- .col-md-12 close -->
+                </div><!-- .row close -->
+            </div><!-- .container close -->
+        </section><!-- #gallery close -->
 
         <section id="recommends">
             <div class="container">
@@ -155,6 +195,20 @@
 		  var s = document.getElementsByTagName("script")[0];
 		  s.parentNode.insertBefore(hm, s);
 		})();
+
+    $(document).ready(function(){
+    	 $("#owl-demo").owlCarousel({
+
+    		autoPlay: 3000, //Set AutoPlay to 3 seconds
+
+    		items : 3,
+    		itemsDesktop : [1199,3],
+    		itemsDesktopSmall : [979,3],
+    		navigation: true,
+    		navigationText: ["<i class='fa fa-angle-left'></i>","<i class='fa fa-angle-right'></i>"]
+
+    	});
+    });
 		</script>
 
     </body>
