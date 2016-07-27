@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://colobu.com/2015/05/19/Variance-lower-bounds-upper-bounds-in-Scala/</loc>
+    <lastmod>2016-07-27T10:27:07.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2016/07/25/understanding-rxjava-thread-model/</loc>
     <lastmod>2016-07-26T06:00:26.000Z</lastmod>
   </url>
@@ -123,11 +128,6 @@
   
   <url>
     <loc>http://colobu.com/2015/09/28/go-cross-compiling/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2014/09/30/using-fastjson-as-JAX-RS-data-binding/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -427,6 +427,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-6/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/11/30/movie-recommendation-for-douban-users-by-spark-mllib/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -437,7 +442,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-6/</loc>
+    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-5/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -502,12 +507,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/23/kafka-internals/</loc>
+    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-2/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-5/</loc>
+    <loc>http://colobu.com/2015/03/23/kafka-internals/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -532,17 +537,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2015/04/13/consistent-hash-algorithm-in-java-memcached-client/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
+    <loc>http://colobu.com/2016/02/24/kafka-connect/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -607,11 +607,6 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/12/12/zookeeper-recipes-by-example-2/</loc>
-    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://colobu.com/2014/12/15/zookeeper-recipes-by-example-4/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -672,6 +667,11 @@
   </url>
   
   <url>
+    <loc>http://colobu.com/2016/05/10/using-winmerge-with-tortoisegit/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://colobu.com/2015/07/21/dubbo-performance-test/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
@@ -692,7 +692,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <loc>http://colobu.com/2015/03/11/kafka-configuration-parameters/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -722,7 +722,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2016/05/10/using-winmerge-with-tortoisegit/</loc>
+    <loc>http://colobu.com/techreview/index.html</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -757,7 +757,7 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/techreview/index.html</loc>
+    <loc>http://colobu.com/2014/09/30/using-fastjson-as-JAX-RS-data-binding/</loc>
     <lastmod>2016-06-21T08:57:05.000Z</lastmod>
   </url>
   
@@ -867,7 +867,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2014/09/18/Linux-Performance-Analysis-and-Tools/</loc>
+    <loc>http://colobu.com/2016/03/22/jump-consistent-hash/</loc>
+    <lastmod>2016-06-21T08:57:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://colobu.com/2015/05/22/Mean-Mode-Median-and-Standard-Deviation/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -973,11 +978,6 @@
   
   <url>
     <loc>http://colobu.com/2015/04/24/Web-Frameworks-Benchmark-2015/</loc>
-    <lastmod>2016-06-21T08:57:04.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://colobu.com/2015/05/19/Variance-lower-bounds-upper-bounds-in-Scala/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
@@ -1122,12 +1122,12 @@
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/01/26/complete-java-servlets-tutorial/</loc>
+    <loc>http://colobu.com/2014/09/18/Linux-Performance-Analysis-and-Tools/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://colobu.com/2015/05/22/Mean-Mode-Median-and-Standard-Deviation/</loc>
+    <loc>http://colobu.com/2015/01/26/complete-java-servlets-tutorial/</loc>
     <lastmod>2016-06-21T08:57:04.000Z</lastmod>
   </url>
   
